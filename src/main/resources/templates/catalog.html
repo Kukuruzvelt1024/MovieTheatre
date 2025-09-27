@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог</title>
+    <link rel="stylesheet" href="/internal/css/GlobalStyleSheet.css">
+</head>
+<body>
+
+
+<h1>Каталог</h1>
+<h2>Сортировка</h2>
+<div class="sort"><a href="/catalog?sortby=year">по году</a></div>
+<div class="sort"><a href="/catalog?sortby=ru" class="sort">по названию</a></div>
+<div class="sort"><a href="/catalog?sortby=duration" class="sort">по продолжительности</a></div>
+<h2>Фильтр</h2>
+<div id="Filter_by_genre" align="center">
+    <script src="/internal/javascript/GenresTableProducer.js" defer></script>
+</div>
+<div id="Filter_by_year">
+    <script src="/internal/javascript/YearsTableProducer.js" defer></script>
+</div>
+<div id="Filter_by_country" align="center">
+    <script src="/internal/javascript/CountriesTableProducer.js" defer></script>
+</div>
+<div class="search form">
+    <form>
+        <p><input type="text" name="search" placeholder="Название" size="18" /></p>
+        <button type="submit">Найти</button>
+    </form>
+</div>
+
+<div id="Table_of_entities" align="center">
+    <script src="/internal/javascript/CatalogTableProducer.js" defer>
+
+    </script>
+</div>
+
+<div id="Page_Navigator_Block" align="center">
+
+</div>
+<footer>
+    <p>©2025 Kukuruzvelt. Никаких прав, только обязанности.</p>
+</footer>
+</body>
+</html>

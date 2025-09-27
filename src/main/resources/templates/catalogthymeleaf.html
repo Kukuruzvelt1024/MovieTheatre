@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог</title>
+    <style>
+        body {
+            background-color: #424141;
+            color: white; * Цвет текста */
+            text-align: center;
+        }
+        a:link { color: white } /* Цвет непросмотренной ссылки */
+        a:visited { color: white; } /* Цвет посещенной ссылки */
+        a:hover { color: red; } /* Цвет при наведении */
+        a:active { color: green; } /* Цвет активной ссылки */
+        h1{
+            font-size: 72px;
+            color = white;
+            font-family: "Impact";
+            text-align: center;
+        }
+        h2{
+            text-align: center;
+        }
+        .sort{text-align: center;}
+
+        .plenka{
+            background-image: url(/assets/r);
+            background-size: 100px 50px;
+            background-repeat: no-repeat;
+            background-repeat: repeat-y;
+        }
+        table, th, td{
+            border: 3px solid white;
+            text-align: center;
+        }
+        td:hover {
+                    background: #008080; /* Цвет фона при наведении */
+                    color: #fff; /* Цвет текста при наведении */
+        }
+        .filter{
+            text-align: center;
+        }
+        .years, .genres, .countries{
+            border: 1px solid white;
+            text-align: center;
+        }
+        .search form{
+            display: flex;
+             align-items: center;
+             justify-content: center;
+        }
+        footer{
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <!--<div class="plenka"/>
+
+    -->
+    <h1>Каталог</h1>
+    <h2>Сортировка</h2>
+    <div class="sort"><a href="/catalog?sortby=year">по году</a></div>
+    <div class="sort"><a href="/catalog?sortby=ru" class="sort">по названию</a></div>
+    <div class="sort"><a href="/catalog?sortby=duration" class="sort">по продолжительности</a></div>
+    <h2>Фильтр</h2>
+    <details class="filter">
+        <summary>по жанру</summary>
+        <table class ="genres" align="center">
+            <tr>
+                <td><a href="?all"><p>Все</p></a></td>
+                <td th:each="genre: ${listOfGenres}">
+                    <a th:href="'?genre=' + ${genre}"><p th:text="${genre}"/></a>
+                </td>
+            </tr>
+        </table>
+    </details>
+    <details class="filter">
+        <summary>по году</summary>
+        <table class ="years" align="center">
+            <tr>
+                <td><a href="?all"><p>Все</p></a></td>
+                <td th:each="year: ${listOfYears}">
+                    <a th:href="'?year=' + ${year}"><p th:text="${year}"/></a>
+                </td>
+            </tr>
+        </table>
+    </details>
+    <details class="filter">
+        <summary>по стране</summary>
+        <table class ="countries" align="center">
+            <tr>
+                <td><a href="?all"><p>Все</p></a></td>
+                <td th:each="country: ${listOfCountries}">
+                    <a th:href="'?country=' + ${country}"><p th:text="${country}"/></a>
+                </td>
+            </tr>
+        </table>
+    </details>
+    <div class="search form">
+        <form>
+            <p><input type="text" name="search" placeholder="Название" size="18" /></p>
+            <button type="submit">Найти</button>
+        </form>
+    </div>
+    <table class="movie_blocks_table" align="center">
+        <tr th:each="video, status : ${listOfMovies}">
+            <td><a th:href="'/movie/' + ${video.WebMapping}"><img th:src="'/poster/' + ${video.WebMapping}" th:alt="${video.TitleRussian}" width="120" height="180" /></a>
+                <a th:href="'/movie/' + ${video.WebMapping}"><p th:text="${video.TitleRussian}"/></a>
+                <p th:text="${video.getCountriesAsString()} + ' / ' + ${video.getGenresAsString()} + ' / ' + ${video.Duration} + ' мин. / ' + ${video.Year}"/>
+
+            </td>
+        </tr>
+    </table>
+        <footer>
+            <p>©2025 Kukuruzvelt. Никаких прав, только обязанности.</p>
+        </footer>
+    </body>
+ </html>

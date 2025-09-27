@@ -1,0 +1,77 @@
+body{
+	background-color: black;
+        color: white; * Цвет текста */
+        text-align: center;
+}
+        a:link {color: white } /* Цвет непросмотренной ссылки */
+        a:visited {color: white; } /* Цвет посещенной ссылки */
+        a:hover {color: red; } /* Цвет при наведении */
+        a:active {color: green; } /* Цвет активной ссылки */
+h1{
+	font-size: 42px;
+        color = white;
+        font-family: "Impact";
+        text-align: center;
+}
+h2{
+        text-align: center;
+}
+.sort{
+	text-align: center;
+}
+table{
+	border-collapse: separate; 
+	border-spacing: 90px;
+}
+th, td{
+	background-color: #424141;
+        border: 1px solid white; /*Толщина границ рамок таблицы*/
+	border-radius: 12px;	/*Радиус скругления*/
+        text-align: center;
+}
+.table_of_years{
+	border-collapse: separate; 
+	border-spacing: 10px;
+}
+.table_of_years td{
+	width: 80px;
+	font-size: 12px;
+
+}
+.table_of_countries{
+	border-collapse: separate; 
+	border-spacing: 10px;
+}
+.table_of_countries td{
+	width: 80px;
+}
+.table_of_genres{
+	border-collapse: separate; 
+	border-spacing: 10px;	
+}
+.table_of_genres td{
+	width: 80px;
+}
+td:hover{
+	background: #2E8B57; /* Цвет фона при наведении */
+ 	color: #fff; /* Цвет текста при наведении */
+}
+.filter{
+	text-align: right;
+}
+
+.search form{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.table_of_page_navigator{
+    border-collapse: separate;
+	border-spacing: 20px;
+}
+.table_of_page_navigator td{
+    width: 75px;
+}
+footer{
+	text-align: center;
+}
