@@ -19,9 +19,9 @@ h2{
 .sort{
 	text-align: center;
 }
-table{
+.table_of_entities{
 	border-collapse: separate; 
-	border-spacing: 90px;
+	border-spacing: 20px;
 }
 th, td{
 	background-color: #424141;

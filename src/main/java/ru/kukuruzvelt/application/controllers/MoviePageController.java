@@ -23,6 +23,10 @@ public class MoviePageController {
             System.out.println("Доступ к странице просмотра: " + name);
             model.addAttribute("pageTitle", me.getTitleRussian());
             model.addAttribute("page", "file/" + name);
+            model.addAttribute("RussianTitle", me.getTitleRussian());
+            model.addAttribute("Countries", me.getCountriesAsString());
+            model.addAttribute("Genres", me.getGenresAsString());
+            model.addAttribute("Duration", me.getDuration());
             return "video";
         }
         catch (NullPointerException npe){

@@ -1,10 +1,5 @@
 {
-let nparams = new URLSearchParams(document.location.search);
-let countryRequired = nparams.get("country");
-let yearRequired = nparams.get("year");
-let genreRequired = nparams.get("genre");
-let searchRequest = nparams.get("search");
-let sortType = nparams.get("sortby");
+
 let pageNavigatorTable = document.createElement('table')
 pageNavigatorTable.setAttribute("align", "center");
 pageNavigatorTable.setAttribute("class", "table_of_page_navigator");

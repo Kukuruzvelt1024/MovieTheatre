@@ -144,6 +144,29 @@ public class DAO {
         return this;
     }
 
+    public DAO filterByAllParams(String yearRequired,
+                                 String genreRequired,
+                                 String countryRequired,
+                                 String searchRequest){
+        this.localDatabaseCopy = this.localDatabaseCopy.stream()
+                .filter((yearRequired.contentEquals("null") ||
+                        yearRequired.contentEquals("all")) ?
+                        me->true : me -> me.getYear().equals(Integer.parseInt(yearRequired)))
+                .filter(genreRequired.contentEquals("null") ||
+                        genreRequired.contentEquals("all") ?
+                        me -> true:
+                        me -> me.containsGenre(genreRequired))
+                .filter(countryRequired.contentEquals("null") ||
+                        countryRequired.contentEquals("all") ?
+                        me -> true:
+                        me -> me.containsCountry(countryRequired))
+                .filter(searchRequest.contentEquals("null")?
+                        me -> true:
+                        me -> me.getTitleRussian().contains(searchRequest))
+                .collect(Collectors.toList());
+                return this;
+    }
+
     public MovieEntity findByOriginalTitle(String title){
         Iterator<MovieEntity> cachedListIterator = localDatabaseCopyCache.iterator();
         while (cachedListIterator.hasNext()){

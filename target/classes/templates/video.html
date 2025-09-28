@@ -4,40 +4,32 @@
 
         <meta charset="UTF-8">
         <title th:text="${pageTitle}"></title>
-        <style>
-            body {
-                background-color: #424141;
-                color: white; * Цвет текста */
-            }
-             a:link { color: white } /* Цвет непросмотренной ссылки */
-        a:visited { color: white; } /* Цвет посещенной ссылки */
-        a:hover { color: red; } /* Цвет при наведении */
-        a:active { color: green; } /* Цвет активной ссылки */
-            h1 {
-                font-size: 72px;
-                color = white;
-                font-family: "Impact";
-                text-align: center;
-            }
-            .template player{
-                display: flex;
-             align-items: center;
-             justify-content: center;
-            }
-            h3 {
-                font-size: 26px;
-                color = white;
-                font-family: "Impact";
-                text-align: center;
-            }
-        </style>
+        <link rel="stylesheet" href="/internal/css/GlobalStyleSheet.css">
         </head>
         <body>
             <h1><p th:text="${pageTitle}"></p></h1>
-            <div id="template player">
+            <div id="template player" align="center">
                 <video width="1280" height="729" controls>
                     <source th:src="'/'+${page}" type="video/mp4">
                 </video>
+                <table>
+                    <tr>
+                        <td>Название</td>
+                        <td><p th:text="${RussianTitle}"></p></td>
+                    </tr>
+                    <tr>
+                        <td>Страна</td>
+                        <td><p th:text="${Countries}"></p></td>
+                    </tr>
+                    <tr>
+                        <td>Жанр</td>
+                        <td><p th:text="${Genres}"></p></td>
+                    </tr>
+                    <tr>
+                        <td>Продолжительность</td>
+                        <td><p th:text="${Duration}"></p></td>
+                    </tr>
+                </table>
                 <h3><a href="/catalog">В каталог</a></h3>
             </div>
 

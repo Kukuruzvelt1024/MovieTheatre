@@ -20,11 +20,11 @@ import java.util.List;
 @Controller
 public class CatalogController {
 
-    private static int entitiesPerPage = 12;
+    private static int entitiesPerPage = 9;
     private static int entitiesPerRow = 3;
 
 
-    @GetMapping("/catalogthymeleaf")
+    @GetMapping("/thymeleaf/catalog")
     public String getCatalog(Model model,
                              HttpServletRequest request,
                              HttpServletResponse response,
@@ -81,12 +81,10 @@ public class CatalogController {
                         "; Тип сортировки: " + sortingType);
         List<MovieEntity> list = DAO.getInstance(Application.sourceBase)
                 .prepareData()
-                .filterByYear(yearRequired)
-                .filterByGenre(genreRequired)
-                .filterByCountry(countryRequired)
-                .filterBySearchRequest(searchRequest)
+                .filterByAllParams(yearRequired, genreRequired, countryRequired, searchRequest)
                 .sortBy(sortingType)
                 .getListOfEntities();
+
         if (!page.contentEquals("null")) {
             try {
                 System.out.println("Number Format Exception Catched");
