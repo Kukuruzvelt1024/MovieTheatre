@@ -3,7 +3,7 @@ let countryRequired = params.get("country");
 let yearRequired = params.get("year");
 let genreRequired = params.get("genre");
 let searchRequest = params.get("search");
-let sortType = params.get("sortby");
+let sortType = params.get("sort");
 let page = params.get("page");
 if (page == null){
     page = "1";

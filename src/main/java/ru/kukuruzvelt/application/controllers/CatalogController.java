@@ -22,6 +22,7 @@ public class CatalogController {
 
     private static int entitiesPerPage = 9;
     private static int entitiesPerRow = 3;
+    private int totalAvailableEntitiesPerRequest;
 
 
     @GetMapping("/thymeleaf/catalog")
@@ -69,8 +70,8 @@ public class CatalogController {
              @RequestParam(name = "genre", required = false, defaultValue = "null") String genreRequired,
              @RequestParam(name = "country", required = false, defaultValue = "null") String countryRequired,
              @RequestParam(name = "search", required = false, defaultValue = "null") String searchRequest,
-             @RequestParam(name = "sortby", required = false, defaultValue = "null") String sortingType,
-             @RequestParam(name = "page", required = false, defaultValue = "null") String page){
+             @RequestParam(name = "sort", required = false, defaultValue = "null") String sortingType,
+             @RequestParam(name = "page", required = false, defaultValue = "null") String pageNumber){
         System.out.println(
                 "=============================================\n" +
                         "Доступ к REST каталогу от: " + request.getRemoteAddr() +
@@ -78,41 +79,25 @@ public class CatalogController {
                         "; Запрошенный жанр:" + genreRequired +
                         "; Запрошенная страна: " + countryRequired +
                         "; Поиск по тексту: " + searchRequest+
-                        "; Тип сортировки: " + sortingType);
+                        "; Тип сортировки: " + sortingType +
+                        "; Страница: " + pageNumber);
         List<MovieEntity> list = DAO.getInstance(Application.sourceBase)
                 .prepareData()
                 .filterByAllParams(yearRequired, genreRequired, countryRequired, searchRequest)
                 .sortBy(sortingType)
+                .reduceToLimitOfEntitiesPerPage(pageNumber, entitiesPerPage)
                 .getListOfEntities();
-
-        if (!page.contentEquals("null")) {
-            try {
-                System.out.println("Number Format Exception Catched");
-                int pagge = Integer.parseInt(page);
-                list = subListed(list, pagge);
-
-            } catch (NumberFormatException exception) {
-                return new ResponseEntity<>(list, HttpStatus.OK);
-            }
-        }
+        System.out.println("==========\n ОТПРАВКА ДАННЫХ В РАЗМЕРЕ: " + list.size());
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/raw/{name}")
+    @GetMapping("/raw/{type}")
     public ResponseEntity<List> returnValues(
-            @PathVariable String name){
-        List list = DAO.getInstance(Application.sourceBase).prepareData().getAllAvailableParameters(name);
+            @PathVariable String type){
+        List list = DAO.getInstance(Application.sourceBase).prepareData().getAllAvailableParameters(type);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    private List subListed(List rawList, int page){
-        int lastIndexOfRawList = rawList.size() - 1;
-        int beginIndex = (page - 1) * entitiesPerPage;
-        if (beginIndex > lastIndexOfRawList) return rawList;
-        int endIndex = page*entitiesPerPage - 1;
-        if (endIndex > lastIndexOfRawList) endIndex = lastIndexOfRawList;
-        return rawList.subList(beginIndex, endIndex+1);
-    }
 
 
 }

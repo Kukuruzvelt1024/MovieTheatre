@@ -14,7 +14,7 @@ import lombok.*;
 public class MovieEntity {
 
     private String WebMapping;
-    private String FilePath;
+    private String VideoFileName;
     private String PosterFileName;
     private Integer Year;
     private String[] Countries;

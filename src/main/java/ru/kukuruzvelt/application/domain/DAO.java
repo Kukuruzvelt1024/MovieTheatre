@@ -1,5 +1,7 @@
 package ru.kukuruzvelt.application.domain;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.kukuruzvelt.application.model.MovieEntity;
 
 import java.io.IOException;
@@ -36,7 +38,7 @@ public class DAO {
                     MovieEntity entity =
                     MovieEntity.builder()
                             .WebMapping(takeInfo(iterator))
-                            .FilePath(takeInfo(iterator))
+                            .VideoFileName(takeInfo(iterator))
                             .PosterFileName(takeInfo(iterator))
                             .Year(Integer.parseInt(takeInfo(iterator)))
                             .Countries((takeInfo(iterator)).split(", "))
@@ -167,44 +169,6 @@ public class DAO {
                 return this;
     }
 
-    public MovieEntity findByOriginalTitle(String title){
-        Iterator<MovieEntity> cachedListIterator = localDatabaseCopyCache.iterator();
-        while (cachedListIterator.hasNext()){
-            MovieEntity me = cachedListIterator.next();
-            if (me.getWebMapping().equalsIgnoreCase(title)){
-                return me;
-            }
-        }
-        this.loadDataFromExternalSource();
-        Iterator<MovieEntity> it = this.localDatabaseCopy.iterator();
-        while (it.hasNext()){
-            MovieEntity me = it.next();
-            if (me.getTitleOriginal().equalsIgnoreCase(title)){
-                return me;
-            }
-        }
-        return null;
-    }
-
-    public MovieEntity findByRussianTitle(String title){
-        Iterator<MovieEntity> cachedListIterator = localDatabaseCopyCache.iterator();
-        while (cachedListIterator.hasNext()){
-            MovieEntity me = cachedListIterator.next();
-            if (me.getWebMapping().equalsIgnoreCase(title)){
-                return me;
-            }
-        }
-        this.loadDataFromExternalSource();
-        Iterator<MovieEntity> it = this.localDatabaseCopy.iterator();
-        while (it.hasNext()){
-            MovieEntity me = it.next();
-            if (me.getTitleRussian().equalsIgnoreCase(title)){
-                return me;
-            }
-        }
-        return null;
-    }
-
     public MovieEntity findByWebMapping(String webMapping) throws NullPointerException{
         Optional<MovieEntity> optionalStaticSearchResult =
                 localDatabaseCopyCache.
@@ -222,23 +186,28 @@ public class DAO {
         return null;
     }
 
-    public MovieEntity findByFilePath(String filePath){
-        Iterator<MovieEntity> cachedListIterator = localDatabaseCopyCache.iterator();
-        while (cachedListIterator.hasNext()){
-            MovieEntity me = cachedListIterator.next();
-            if (me.getWebMapping().equalsIgnoreCase(filePath)){
-                return me;
+    public DAO reduceToLimitOfEntitiesPerPage(String page, int entitiesPerPage) {
+        if (!page.contentEquals("null")) {
+            try {
+                int pagge = Integer.parseInt(page);
+                this.localDatabaseCopy = subListed(this.localDatabaseCopy, pagge, entitiesPerPage);
+            } catch (NumberFormatException exception) {
+                System.out.println("NumFormatException catched");
+                return this;
+
             }
+
         }
-        this.loadDataFromExternalSource();
-        Iterator<MovieEntity> it = this.localDatabaseCopy.iterator();
-        while (it.hasNext()){
-            MovieEntity me = it.next();
-            if (me.getFilePath().equalsIgnoreCase(filePath)){
-                return me;
-            }
-        }
-        return null;
+        return this;
+    }
+
+    private List subListed(List rawList, int page, int entitiesPerPage){
+        int lastIndexOfRawList = rawList.size() - 1;
+        int beginIndex = (page - 1) * entitiesPerPage;
+        if (beginIndex > lastIndexOfRawList) return rawList;
+        int endIndex = page*entitiesPerPage - 1;
+        if (endIndex > lastIndexOfRawList) endIndex = lastIndexOfRawList;
+        return rawList.subList(beginIndex, endIndex+1);
     }
 
     public DAO sortBy(String sortType) {
@@ -277,17 +246,6 @@ public class DAO {
 
     private String takeInfo(Iterator<String> iterator){
         return iterator.next().split(" = ")[1];
-    }
-
-
-
-    class UpdateScheduler extends TimerTask{
-
-
-        @Override
-        public void run() {
-
-        }
     }
 
 }

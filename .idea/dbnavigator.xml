@@ -27,6 +27,9 @@
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="e37e52fd-ffb4-4c83-8dda-d30700089fc9" dataset="public.movies" active-filter-id="" />
   </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
+  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />

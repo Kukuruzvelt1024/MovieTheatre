@@ -23,10 +23,13 @@ h2{
 	border-collapse: separate; 
 	border-spacing: 20px;
 }
+.table_of_entities td{
+    width: 200px;
+}
 th, td{
 	background-color: #424141;
         border: 1px solid white; /*Толщина границ рамок таблицы*/
-	border-radius: 12px;	/*Радиус скругления*/
+	border-radius: 9px;	/*Радиус скругления*/
         text-align: center;
 }
 .table_of_years{

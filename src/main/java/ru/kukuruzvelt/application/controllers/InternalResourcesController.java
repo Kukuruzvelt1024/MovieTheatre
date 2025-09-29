@@ -32,7 +32,9 @@ public class InternalResourcesController {
                              HttpServletResponse response,
                              @PathVariable String name)
             throws ServletException, IOException {
-        System.out.println("Отправка видеофрагмента: " + name + " на адрес: " + request.getRemoteAddr());
+        System.out.println("Отправка видеофрагмента: " + name
+                + " на адрес: " + request.getRemoteAddr()
+                + " Range: " + request.getHeader("Range"));
         File source = new File(sourceFolder, name);
         request.setAttribute(MyResourceHttpRequestHandler.ATTR_FILE, source);
         handler.handleRequest(request, response);
@@ -83,7 +85,7 @@ public class InternalResourcesController {
         protected Resource getResource(HttpServletRequest request) throws IOException {
             final File file = (File) request.getAttribute(ATTR_FILE);
             return new FileSystemResource(new File(sourceFolder.concat(DAO.getInstance(Application.sourceBase).
-                    findByWebMapping(extractWebMapping(request)).getFilePath())));
+                    findByWebMapping(extractWebMapping(request)).getVideoFileName())));
         }
 
         private String extractWebMapping(HttpServletRequest request){
