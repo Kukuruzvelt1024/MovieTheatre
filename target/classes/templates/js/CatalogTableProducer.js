@@ -1,19 +1,24 @@
 let params = new URLSearchParams(document.location.search);
-let countryRequired = params.get("country");
-let yearRequired = params.get("year");
-let genreRequired = params.get("genre");
-let searchRequest = params.get("search");
-let sortType = params.get("sort");
-let page = params.get("page");
-if (page == null){
-    page = "1";
-}
-console.log("Current Page = " + page);
 let catalogTable = document.createElement('table');
+let pageNavigatorTable = document.createElement('table');
+pageNavigatorTable.setAttribute("align", "center");
+pageNavigatorTable.setAttribute("class", "table_of_page_navigator");
+let headers = null;
 catalogTable.setAttribute("align", "center");
 catalogTable.setAttribute("class", "table_of_entities");
-fetch("/raw/catalog?genre="+genreRequired+"&year="+yearRequired+"&country="+countryRequired+"&search="+searchRequest+"&sortby="+sortType+"&page=" + page)
+fetch("/raw/catalog?"+
+"genre="+params.get("genre")+
+"&year="+ params.get("year")+
+"&country="+params.get("country")+
+"&search="+params.get("search")+
+"&sort="+params.get("sort")+
+"&page=" + params.get("page") +
+"&decade="+params.get("decade"))
        .then(response => {
+            headers = response.headers;
+            console.log("EntitiesPerPage = " + headers.get("EntitiesPerPage"));
+            console.log("EntitiesPerRow = " + headers.get("EntitiesPerRow"));
+            console.log("ResultSetSize = " + headers.get("ResultSetSize"));
            if (!response.ok) {
                throw new Error(`HTTP error! status: ${response.status}`);
            }
@@ -21,12 +26,11 @@ fetch("/raw/catalog?genre="+genreRequired+"&year="+yearRequired+"&country="+coun
       })
       .then(data => {
           console.log(data); // Работаем с данными
-          console.log("Amount of entities = " + data.length);
-
+          console.log("Amount of entities recieved from server = " + data.length);
           var row = catalogTable.insertRow();
-          var i = 0;
+          let i = 0;
           for (const entity of data){
-               if(i == 3){
+               if(i == headers.get("EntitiesPerRow")){
                    var row = catalogTable.insertRow();
                    i = 0;
                }
@@ -35,11 +39,19 @@ fetch("/raw/catalog?genre="+genreRequired+"&year="+yearRequired+"&country="+coun
                cell.innerHTML =
                "<a href=/movie/" + entity.WebMapping +"><img src=internal/poster/" + entity.WebMapping + " alt="+entity.TitleRussian + " width=120 height=180 /></a>" +
                "<p><a href=/movie/"+entity.WebMapping+ ">" + entity.TitleRussian + "</a></p>" +
-               "<p>" + entity.Countries + " / " + entity.genresAsString + " / " + entity.Duration + " мин. / " + entity.Year + "</p>"
-           }
-
+               "<p>" + entity.countriesAsString + " / " + entity.Year + " г.</p> <p>" + entity.Duration + " мин. / " + entity.genresAsString + "</p>"
+           }//
+          const paragraph = document.createElement('p');
+          paragraph.textContent = "Всего фильмов по данному запросу: " + headers.get("ResultSetSize");
+          document.getElementById("Amount_of_entities_presented").appendChild(paragraph);
+          var pageNavigatorRow = pageNavigatorTable.insertRow();
+          for(let j = 1; j<((headers.get("ResultSetSize"))/12)+1; j++){
+                let cell = pageNavigatorRow.insertCell();
+                cell.innerHTML = "<a href=/catalog?page=" + j + ">" + j + "</a>";
+          }
       })
       .catch(error => {
             console.error('Ошибка при получении данных:', error);
       });
         document.getElementById("Table_of_entities").appendChild(catalogTable);
+        document.getElementById("Page_Navigator_Block").appendChild(pageNavigatorTable);

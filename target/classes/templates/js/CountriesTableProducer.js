@@ -8,11 +8,16 @@ let countriestable = document.createElement('table');
        .then(data => {
             var row = countriestable.insertRow();
             let allCountriesCellReference = row.insertCell();
-            allCountriesCellReference.innerHTML = "<p><a href=?country=all>Все</a><p/>"
+            allCountriesCellReference.innerHTML = "<p><a href=?country=all>Все страны</a><p/>"
+            var i = 1;
              for (const entity of data){
+                if (i == 5){
+                    var row = countriestable.insertRow();
+                }
                 let cell = row.insertCell();
                 cell.innerHTML =
                 "<p><a href=?country=" + entity + ">" + entity + "</a></p>"
+                i++;
             }
        })
        .catch(error => {

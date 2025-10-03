@@ -2,6 +2,8 @@ package ru.kukuruzvelt.application.model;
 
 import lombok.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -53,6 +55,27 @@ public class MovieEntity {
           if (genreRequired.contentEquals(Genres[i])) return true;
       }
       return false;
+  }
+
+  public boolean belongsDecade(int decade){
+      return ((this.Year - decade <= 9) && (this.Year - decade >= 0));
+  }
+
+  public boolean matchesRequirement(Map<String, String> paramsMap){
+      String genreRequired = paramsMap.get("genre") == null ? "null" : paramsMap.get("genre");
+      String countryRequired = paramsMap.get("country") == null ? "null" :paramsMap.get("country");
+      String searchRequest = paramsMap.get("search") == null ? "null" : paramsMap.get("search");
+      String decadeRequired = paramsMap.get("decade") == null ? "null" : paramsMap.get("decade");
+      if (    (this.containsGenre(genreRequired) || genreRequired.contentEquals("null") || genreRequired.contentEquals("all")) &
+              (this.containsCountry(countryRequired) || countryRequired.contentEquals("null") || countryRequired.contentEquals("all")) &
+              (this.getTitleRussian().contains(searchRequest) || searchRequest.contentEquals("null") || searchRequest.contentEquals("all")) &
+              (this.belongsDecade(Integer.parseInt(decadeRequired)) || decadeRequired.contentEquals("null") || decadeRequired.contentEquals("all")))
+          return true;
+      return false;
+  }
+
+  class NullEntity{
+
   }
 
 

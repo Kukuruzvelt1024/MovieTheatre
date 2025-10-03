@@ -7,8 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.kukuruzvelt.application.Application;
-import ru.kukuruzvelt.application.domain.DAO;
+import ru.kukuruzvelt.application.domain.DAOTextFile;
 import ru.kukuruzvelt.application.model.MovieEntity;
 
 @Slf4j
@@ -18,7 +17,7 @@ public class MoviePageController {
     @GetMapping("/movie/{name}")
     public String videoController1(Model model, @PathVariable String name){
         try {
-            MovieEntity me = DAO.getInstance(Application.sourceBase).findByWebMapping(name);
+            MovieEntity me = new DAOTextFile().findByWebMapping(name);
             // var loggingEventBuilder = log.atDebug();
             System.out.println("Доступ к странице просмотра: " + name);
             model.addAttribute("pageTitle", me.getTitleRussian());
@@ -36,7 +35,7 @@ public class MoviePageController {
 
     @GetMapping("raw/movie/{name}")
     public ResponseEntity movieData(@PathVariable String name){
-        MovieEntity me = DAO.getInstance(Application.sourceBase).findByWebMapping(name);
+        MovieEntity me = new DAOTextFile().findByWebMapping(name);
         return new ResponseEntity<MovieEntity>(me, HttpStatus.OK);
     }
 

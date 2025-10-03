@@ -10,8 +10,14 @@
             console.log("Length=" + data.length);
             var row = genrestable.insertRow();
             let allGenresCellReference = row.insertCell();
-            allGenresCellReference.innerHTML = "<p><a href=?genre=all>Все</a><p/>"
+            let i = 0;
+            allGenresCellReference.innerHTML = "<p><a href=?genre=all>Все жанры</a><p/>"
              for (const entity of data){
+                i++;
+                if(i == 6){
+                    i = 0;
+                    row = genrestable.insertRow()
+                }
                 let cell = row.insertCell();
                 cell.innerHTML =
                 "<p><a href=?genre=" + entity + ">" + entity + "</a></p>"

@@ -9,18 +9,14 @@
 
 
 <h1>Каталог</h1>
-<h2>Сортировка</h2>
-<div class="sort"><a href="/catalog?sort=year">по году</a></div>
-<div class="sort"><a href="/catalog?sort=ru" class="sort">по названию</a></div>
-<div class="sort"><a href="/catalog?sort=duration" class="sort">по продолжительности</a></div>
-<h2>Фильтр</h2>
+
 <div id="Filter_by_genre" align="center">
     <script src="/internal/javascript/GenresTableProducer.js" defer></script>
 </div>
-<details id="Filter_by_year">
-    <summary>по годам</summary>
+<div id="Filter_by_year">
+
     <script src="/internal/javascript/YearsTableProducer.js" defer></script>
-</details>
+</div>
 <div id="Filter_by_country" align="center">
     <script src="/internal/javascript/CountriesTableProducer.js" defer></script>
 </div>
@@ -30,7 +26,7 @@
         <button type="submit">Найти</button>
     </form>
 </div>
-
+<div id="Amount_of_entities_presented" align="center"></div>
 <div id="Table_of_entities" align="center">
     <script src="/internal/javascript/CatalogTableProducer.js" defer>
 
@@ -38,7 +34,6 @@
 </div>
 
 <div id="Page_Navigator_Block" align="center">
-    <script src="/internal/javascript/PageNavigatorTableProducer.js" defer></script>
 </div>
 <footer>
     <p>©2025 Kukuruzvelt. Никаких прав, только обязанности.</p>

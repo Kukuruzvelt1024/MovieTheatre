@@ -1,22 +1,27 @@
-let yearstable = document.createElement('table');
-        yearstable.setAttribute("align", "left");
-        yearstable.setAttribute("class", "table_of_years");
-        fetch("/raw/years").then(response => {
+let decadestable = document.createElement('table');
+        decadestable.setAttribute("align", "center");
+        decadestable.setAttribute("class", "table_of_years");
+
+        fetch("/raw/decades").then(response => {
             if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
             return response.json(); // Преобразование ответа в JSON
        })
        .then(data => {
-            var row = yearstable.insertRow();
-            let allYearCellReference = row.insertCell();
-            allYearCellReference.innerHTML = "<p><a href=?year=all>Все</a><p/>"
+            var row = decadestable.insertRow();
+            let alldecadesCellReference = row.insertCell();
+            alldecadesCellReference.innerHTML = "<p><a href=?decade=all>Все</a><p/>"
+            let i = 1;
              for (const entity of data){
-		 var row = yearstable.insertRow();
+                if (i == 4){
+                    var row = decadestable.insertRow();
+                }
                 let cell = row.insertCell();
                 cell.innerHTML =
-                "<p><a href=?year=" + entity + ">" + entity + "</a></p>"
+                "<p><a href=?decade=" + entity + ">" + entity + "-е"+"</a></p>"
+                i++
             }
        })
        .catch(error => {
              console.error('Ошибка при получении данных:', error);
        });
-     document.getElementById("Filter_by_year").appendChild(yearstable);
+     document.getElementById("Filter_by_year").appendChild(decadestable);

@@ -11,10 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
-import ru.kukuruzvelt.application.Application;
-import ru.kukuruzvelt.application.domain.DAO;
+import ru.kukuruzvelt.application.domain.DAOTextFile;
+import ru.kukuruzvelt.application.domain.DAOJdbcImpl;
 import ru.kukuruzvelt.application.model.MovieEntity;
 import java.io.*;
+import java.sql.SQLException;
 
 @Controller
 public class InternalResourcesController {
@@ -44,13 +45,13 @@ public class InternalResourcesController {
     @GetMapping("internal/{sourceType}/{fileName}")
     public StreamingResponseBody getFileFromLocalFileSystem(
             @PathVariable String sourceType,
-            @PathVariable String fileName) throws IOException {
+            @PathVariable String fileName) throws IOException, SQLException {
         String localStorageSourcehPath = null;
         if (sourceType.contentEquals("css")) localStorageSourcehPath = cssFolder.concat(fileName);
         if (sourceType.contentEquals("javascript")) localStorageSourcehPath = jsFolder.concat(fileName);
         if (sourceType.contentEquals("assets")) localStorageSourcehPath = assetsFolder.concat(fileName);
         if (sourceType.contentEquals("poster")){
-            DAO dao = DAO.getInstance(Application.sourceBase); //System.out.println("Отправка постера: " + me.getPosterFileName());
+            DAOJdbcImpl dao = new DAOJdbcImpl(); //System.out.println("Отправка постера: " + me.getPosterFileName());
             MovieEntity me = dao.findByWebMapping(fileName);
             localStorageSourcehPath = posterFolder.concat(me.getPosterFileName());
         }
@@ -59,12 +60,6 @@ public class InternalResourcesController {
         return (os) -> {readAndWrite(fileStream, os);
         };
     }
-
-    private void translateURLIntoLocalSourcePath(String sourceType, String nameOfResource){
-
-    }
-
-
 
     private void readAndWrite(final InputStream is, OutputStream os)
             throws IOException {
@@ -84,7 +79,7 @@ public class InternalResourcesController {
         @Override
         protected Resource getResource(HttpServletRequest request) throws IOException {
             final File file = (File) request.getAttribute(ATTR_FILE);
-            return new FileSystemResource(new File(sourceFolder.concat(DAO.getInstance(Application.sourceBase).
+            return new FileSystemResource(new File(sourceFolder.concat(new DAOTextFile().
                     findByWebMapping(extractWebMapping(request)).getVideoFileName())));
         }
 

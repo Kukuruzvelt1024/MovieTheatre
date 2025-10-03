@@ -1,64 +1,29 @@
 package ru.kukuruzvelt.application.controllers;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kukuruzvelt.application.Application;
-import ru.kukuruzvelt.application.domain.DAO;
+import ru.kukuruzvelt.application.domain.DAOTextFile;
+import ru.kukuruzvelt.application.domain.DAOJdbcImpl;
 import ru.kukuruzvelt.application.model.MovieEntity;
 
+import java.sql.SQLException;
 import java.util.List;
-
+import java.util.Map;
 
 @Controller
 public class CatalogController {
 
-    private static int entitiesPerPage = 9;
+    private static int entitiesPerPage = 12;
     private static int entitiesPerRow = 3;
-    private int totalAvailableEntitiesPerRequest;
-
-
-    @GetMapping("/thymeleaf/catalog")
-    public String getCatalog(Model model,
-                             HttpServletRequest request,
-                             HttpServletResponse response,
-                             @RequestParam(name = "sortby", required = false, defaultValue = "ru") String sortingType,
-                             @RequestParam(name = "year", required = false, defaultValue = "-1") String yearRequired,
-                             @RequestParam(name = "genre", required = false, defaultValue = "all") String genreRequired,
-                             @RequestParam(name = "country", required = false, defaultValue = "all") String countryRequired,
-                             @RequestParam(name = "search", required = false, defaultValue = "null") String searchRequest) {
-       System.out.println(
-                        "Доступ к каталогу от: " + request.getRemoteAddr() +
-                        "; Тип сортировки: " + sortingType +
-                        "; Запрошенный год: " + yearRequired +
-                        "; Запрошенный жанр:" + genreRequired +
-                        "; Запрошенная страна: " + countryRequired +
-                        "; Поиск по тексту: " + searchRequest);
-        DAO dao = DAO.getInstance(Application.sourceBase).
-                prepareData().
-                filterByYear(Integer.parseInt(yearRequired)).
-                filterByGenre(genreRequired).
-                filterByCountry(countryRequired).
-                filterBySearchRequest(searchRequest).
-                sortBy(sortingType);
-        model.addAttribute("listOfGenres", dao.getAllGenres());
-        model.addAttribute("listOfYears", dao.getAllYears());
-        model.addAttribute("listOfCountries", dao.getAllCountries());
-        model.addAttribute("listOfMovies", dao.getListOfEntities());
-        System.out.println(response.getContentType());
-        return "catalogthymeleaf";
-    }
 
     @GetMapping("/catalog")
     public String searchForMovie() {
-
         return "catalog";
     }
 
@@ -66,38 +31,35 @@ public class CatalogController {
     public ResponseEntity<List<MovieEntity>> rawCatalogRequestHandler
             (HttpServletRequest request,
              HttpServletResponse response,
-             @RequestParam(name = "year", required = false, defaultValue = "null") String yearRequired,
-             @RequestParam(name = "genre", required = false, defaultValue = "null") String genreRequired,
-             @RequestParam(name = "country", required = false, defaultValue = "null") String countryRequired,
-             @RequestParam(name = "search", required = false, defaultValue = "null") String searchRequest,
-             @RequestParam(name = "sort", required = false, defaultValue = "null") String sortingType,
-             @RequestParam(name = "page", required = false, defaultValue = "null") String pageNumber){
-        System.out.println(
-                "=============================================\n" +
-                        "Доступ к REST каталогу от: " + request.getRemoteAddr() +
-                        "; Запрошенный год: " + yearRequired +
-                        "; Запрошенный жанр:" + genreRequired +
-                        "; Запрошенная страна: " + countryRequired +
-                        "; Поиск по тексту: " + searchRequest+
-                        "; Тип сортировки: " + sortingType +
-                        "; Страница: " + pageNumber);
-        List<MovieEntity> list = DAO.getInstance(Application.sourceBase)
-                .prepareData()
-                .filterByAllParams(yearRequired, genreRequired, countryRequired, searchRequest)
-                .sortBy(sortingType)
-                .reduceToLimitOfEntitiesPerPage(pageNumber, entitiesPerPage)
-                .getListOfEntities();
-        System.out.println("==========\n ОТПРАВКА ДАННЫХ В РАЗМЕРЕ: " + list.size());
-        return new ResponseEntity<>(list, HttpStatus.OK);
+            @RequestParam Map<String, String> paramsMap) throws SQLException {
+        System.out.println("Fetch to RAW catalog");
+        for(Map.Entry<String, String> entry : paramsMap.entrySet()){
+            System.out.print(entry.getKey() + " = " + entry.getValue() + "; ");
+        }
+        DAOJdbcImpl dao = new DAOJdbcImpl();
+        List<MovieEntity> melist = dao.findAllEntitiesFilteredByHTTPRequestParams(paramsMap);
+        List<MovieEntity> reduced = dao.reduceToLimitOfEntitiesPerPage(paramsMap.get("page"), entitiesPerPage).getListOfEntities();
+        response.setHeader("EntitiesPerPage", String.valueOf(entitiesPerPage));
+        response.setHeader("EntitiesPerRow", String.valueOf(entitiesPerRow));
+        response.setHeader("ResultSetSize", String.valueOf(melist.size()));
+        return new ResponseEntity<>(reduced, HttpStatus.OK);
     }
 
     @GetMapping("/raw/{type}")
-    public ResponseEntity<List> returnValues(
-            @PathVariable String type){
-        List list = DAO.getInstance(Application.sourceBase).prepareData().getAllAvailableParameters(type);
+    public ResponseEntity<List> returnValues(@PathVariable String type) throws SQLException {
+        DAOJdbcImpl dao = new DAOJdbcImpl();
+        List list = dao.findAllDistinctParameterOfEntitiesByType(type);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+
+
+    @GetMapping("/serialize")
+    public void serialize(){
+        DAOTextFile dao = new DAOTextFile();
+        dao.prepareData();
+        dao.serializeToCsv();
+    }
 
 
 }
