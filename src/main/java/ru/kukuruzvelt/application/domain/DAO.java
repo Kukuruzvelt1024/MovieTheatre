@@ -9,8 +9,12 @@ public interface DAO {
 
     public MovieEntity findByWebMapping(String title);
 
-    public List<MovieEntity> findAllEntitiesFilteredByHTTPRequestParams(Map<String, String> paramsMap);
+    public List<MovieEntity> findAndFilterEntitiesNotPaginated(Map<String, String> paramsMap);
 
-    public List<String> findAllDistinctParameterOfEntitiesByType(String type);
+    public long receiveNotPaginatedListQuantity(Map<String, String> paramsMap);
 
+    public List<String> findAllUniqueValueFromRequiredColumn(String type);
+
+
+    List findAndFilterEntitiesPaginated(Map<String, String> paramsMap, int entitiesPerPage);
 }

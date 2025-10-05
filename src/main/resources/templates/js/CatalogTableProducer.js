@@ -39,7 +39,8 @@ fetch("/raw/catalog?"+
                cell.innerHTML =
                "<a href=/movie/" + entity.WebMapping +"><img src=internal/poster/" + entity.WebMapping + " alt="+entity.TitleRussian + " width=120 height=180 /></a>" +
                "<p><a href=/movie/"+entity.WebMapping+ ">" + entity.TitleRussian + "</a></p>" +
-               "<p>" + entity.countriesAsString + " / " + entity.Year + " г.</p> <p>" + entity.Duration + " мин. / " + entity.genresAsString + "</p>"
+               "<p>" + entity.Countries+ " / " + entity.Year + " г.</p> <p>" + entity.Duration + " мин. / " + entity.genresAsString + "</p>"
+               + "<p>Режиссер: " + entity.Directors + "</p>"
            }//
           const paragraph = document.createElement('p');
           paragraph.textContent = "Всего фильмов по данному запросу: " + headers.get("ResultSetSize");

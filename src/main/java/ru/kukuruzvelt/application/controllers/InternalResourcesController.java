@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
-import ru.kukuruzvelt.application.domain.DAOTextFile;
 import ru.kukuruzvelt.application.domain.DAOJdbcImpl;
 import ru.kukuruzvelt.application.model.MovieEntity;
 import java.io.*;
@@ -79,7 +78,7 @@ public class InternalResourcesController {
         @Override
         protected Resource getResource(HttpServletRequest request) throws IOException {
             final File file = (File) request.getAttribute(ATTR_FILE);
-            return new FileSystemResource(new File(sourceFolder.concat(new DAOTextFile().
+            return new FileSystemResource(new File(sourceFolder.concat(new DAOJdbcImpl().
                     findByWebMapping(extractWebMapping(request)).getVideoFileName())));
         }
 

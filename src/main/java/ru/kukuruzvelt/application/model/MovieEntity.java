@@ -24,11 +24,12 @@ public class MovieEntity {
     private Integer Duration;
     private String TitleRussian;
     private String TitleOriginal;
+    private String[] Directors;
 
   public String getGenresAsString(){
       StringBuilder builder = new StringBuilder();
       for(int i = 0; i < this.Genres.length; i++){
-          if(i > 0) builder.append(", ");
+          if(i > 0) builder.append(",   ");
           builder.append(this.Genres[i]);
       }
       return builder.toString();
