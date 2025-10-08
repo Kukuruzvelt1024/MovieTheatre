@@ -1,6 +1,7 @@
 package ru.kukuruzvelt.application.controllers;
 
 import jakarta.servlet.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,9 +14,15 @@ import java.util.*;
 @Controller
 public class CatalogController {
 
-    private static int entitiesPerPage = 12;
+    private static int entitiesPerPage = 9;
     private static int entitiesPerRow = 3;
-    DAO DataAccessObject = new DAOJdbcImpl();
+    @Autowired
+    MovieEntityDAO DataAccessObject;
+
+    @GetMapping("/")
+    public String redirect(){
+        return "redirect:/catalog";
+    }
 
     @GetMapping("/catalog")
     public String staticHTMLCatalogPageHandler() {
@@ -27,9 +34,11 @@ public class CatalogController {
             (HttpServletRequest request,
              HttpServletResponse response,
             @RequestParam Map<String, String> paramsMap)  {
-        System.out.println("Fetch to RAW catalog from: " + request.getRemoteAddr());
-        Long quantity = DataAccessObject.receiveNotPaginatedListQuantity(paramsMap);
-        List paginatedResultList = DataAccessObject.findAndFilterEntitiesPaginated(paramsMap, entitiesPerPage);
+        System.out.println("Fetch to RAW catalog from: "
+                + request.getRemoteAddr()
+        +" SessionID: " + request.getSession().getId());
+        Long quantity = DataAccessObject.getFilteredNotPaginatedListSize(paramsMap);
+        List paginatedResultList = DataAccessObject.recievePaginatedFilteredList(paramsMap, entitiesPerPage);
         response.setHeader("EntitiesPerPage", String.valueOf(entitiesPerPage));
         response.setHeader("EntitiesPerRow", String.valueOf(entitiesPerRow));
         response.setHeader("ResultSetSize", String.valueOf(quantity));
@@ -37,8 +46,19 @@ public class CatalogController {
     }
 
     @GetMapping("/raw/{type}")
-    public ResponseEntity<List> returnValues(@PathVariable String type) throws SQLException {
+    public ResponseEntity<List> returnValues(@PathVariable String type, HttpServletRequest request) throws SQLException {
+        System.out.println("Fetch to raw type SESSION ID: " + request.getSession().getId());
         return new ResponseEntity<>(DataAccessObject.findAllUniqueValueFromRequiredColumn(type), HttpStatus.OK);
     }
 
+    @GetMapping("/{type}")
+    public String redirect1(){
+        return "redirect:/catalog";
+    }
+
+    @GetMapping("hibernate")
+    public String hiberTest(){
+        MovieEntityDAOHibernate dao = new MovieEntityDAOHibernate();
+        return null;
+    }
 }

@@ -1,24 +1,28 @@
 package ru.kukuruzvelt.application.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.kukuruzvelt.application.domain.DAOJdbcImpl;
-import ru.kukuruzvelt.application.domain.DAOTextFile;
+import ru.kukuruzvelt.application.domain.MovieEntityDAO;
+import ru.kukuruzvelt.application.domain.MovieEntityDAOJDBC;
 import ru.kukuruzvelt.application.model.MovieEntity;
 
 @Slf4j
 @Controller
 public class MoviePageController {
 
+    @Autowired
+    MovieEntityDAO DataAccessObject;
+
     @GetMapping("/movie/{name}")
     public String videoController1(Model model, @PathVariable String name){
         try {
-            MovieEntity me = new DAOJdbcImpl().findByWebMapping(name);
+            MovieEntity me = DataAccessObject.findByWebMapping(name);
             // var loggingEventBuilder = log.atDebug();
             System.out.println("Доступ к странице просмотра: " + name);
             model.addAttribute("pageTitle", me.getTitleRussian());
@@ -36,7 +40,7 @@ public class MoviePageController {
 
     @GetMapping("raw/movie/{name}")
     public ResponseEntity movieData(@PathVariable String name){
-        MovieEntity me = new DAOJdbcImpl().findByWebMapping(name);
+        MovieEntity me = new MovieEntityDAOJDBC().findByWebMapping(name);
         return new ResponseEntity<MovieEntity>(me, HttpStatus.OK);
     }
 

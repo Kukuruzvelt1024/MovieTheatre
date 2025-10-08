@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class DAOTextFile implements DAO {
+public class MovieEntityDAOTextFile implements MovieEntityDAO {
 
     public static String sourceBase = "B:\\src\\database_substitute.txt";
 
@@ -17,7 +17,7 @@ public class DAOTextFile implements DAO {
     }
 
     @Override
-    public List<MovieEntity> findAndFilterEntitiesNotPaginated(Map<String, String> paramsMap) {
+    public List<MovieEntity> recieveFilteredNotPaginatedList(Map<String, String> paramsMap) {
         try {
             List<MovieEntity> resultList = new ArrayList<>();
             Iterator<String> iterator = Files.readAllLines(Paths.get(sourceBase)).iterator();
@@ -49,8 +49,8 @@ public class DAOTextFile implements DAO {
     }
 
     @Override
-    public long receiveNotPaginatedListQuantity(Map<String, String> paramsMap) {
-        return findAndFilterEntitiesNotPaginated(paramsMap).size();
+    public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap) {
+        return recieveFilteredNotPaginatedList(paramsMap).size();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DAOTextFile implements DAO {
     }
 
     @Override
-    public List findAndFilterEntitiesPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
+    public List recievePaginatedFilteredList(Map<String, String> paramsMap, int entitiesPerPage) {
         return List.of();
     }
 

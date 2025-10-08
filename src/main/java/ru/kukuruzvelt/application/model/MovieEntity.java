@@ -1,9 +1,15 @@
 package ru.kukuruzvelt.application.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.util.Map;
 
+@Entity
+@Table(name = "public.movies")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,16 +20,27 @@ import java.util.Map;
 
 
 public class MovieEntity {
-
+    @Id
+    private long ID;
+    @Column(name = "webmapping")
     private String WebMapping;
+    @Column(name = "videofilename")
     private String VideoFileName;
+    @Column(name = "posterfilename")
     private String PosterFileName;
+    @Column(name = "yearproduction")
     private Integer Year;
+    @Column(name = "countries")
     private String[] Countries;
+    @Column(name = "genres")
     private String[] Genres;
+    @Column(name = "duration")
     private Integer Duration;
+    @Column(name = "titlerussian")
     private String TitleRussian;
+    @Column(name = "titleoriginal")
     private String TitleOriginal;
+    @Column(name = "directors")
     private String[] Directors;
 
   public String getGenresAsString(){

@@ -46,7 +46,7 @@ fetch("/raw/catalog?"+
           paragraph.textContent = "Всего фильмов по данному запросу: " + headers.get("ResultSetSize");
           document.getElementById("Amount_of_entities_presented").appendChild(paragraph);
           var pageNavigatorRow = pageNavigatorTable.insertRow();
-          for(let j = 1; j<((headers.get("ResultSetSize"))/12)+1; j++){
+          for(let j = 1; j<((headers.get("ResultSetSize"))/(headers.get("EntitiesPerPage")))+1; j++){
                 let cell = pageNavigatorRow.insertCell();
                 cell.innerHTML = "<a href=/catalog?page=" + j + ">" + j + "</a>";
           }
