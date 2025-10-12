@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class MovieEntityDAOTextFile implements MovieEntityDAO {
+public class CatalogDAOTextFile implements CatalogDAO {
 
     public static String sourceBase = "B:\\src\\database_substitute.txt";
 
@@ -17,7 +17,7 @@ public class MovieEntityDAOTextFile implements MovieEntityDAO {
     }
 
     @Override
-    public List<MovieEntity> recieveFilteredNotPaginatedList(Map<String, String> paramsMap) {
+    public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap) {
         try {
             List<MovieEntity> resultList = new ArrayList<>();
             Iterator<String> iterator = Files.readAllLines(Paths.get(sourceBase)).iterator();
@@ -50,7 +50,7 @@ public class MovieEntityDAOTextFile implements MovieEntityDAO {
 
     @Override
     public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap) {
-        return recieveFilteredNotPaginatedList(paramsMap).size();
+        return findAllByRequiredParameters(paramsMap).size();
     }
 
     @Override
@@ -59,7 +59,12 @@ public class MovieEntityDAOTextFile implements MovieEntityDAO {
     }
 
     @Override
-    public List recievePaginatedFilteredList(Map<String, String> paramsMap, int entitiesPerPage) {
+    public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap) {
+        return List.of();
+    }
+
+    @Override
+    public List findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
         return List.of();
     }
 

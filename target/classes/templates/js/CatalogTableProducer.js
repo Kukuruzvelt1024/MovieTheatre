@@ -39,16 +39,22 @@ fetch("/raw/catalog?"+
                cell.innerHTML =
                "<a href=/movie/" + entity.WebMapping +"><img src=internal/poster/" + entity.WebMapping + " alt="+entity.TitleRussian + " width=120 height=180 /></a>" +
                "<p><a href=/movie/"+entity.WebMapping+ ">" + entity.TitleRussian + "</a></p>" +
-               "<p>" + entity.Countries+ " / " + entity.Year + " г.</p> <p>" + entity.Duration + " мин. / " + entity.genresAsString + "</p>"
+               "<p>" + entity.countriesAsString+ " / " + entity.Year + " г.</p> <p>" + entity.Duration + " мин. / " + entity.genresAsString + "</p>"
                + "<p>Режиссер: " + entity.Directors + "</p>"
            }//
           const paragraph = document.createElement('p');
           paragraph.textContent = "Всего фильмов по данному запросу: " + headers.get("ResultSetSize");
           document.getElementById("Amount_of_entities_presented").appendChild(paragraph);
           var pageNavigatorRow = pageNavigatorTable.insertRow();
+          console.log(params);
           for(let j = 1; j<((headers.get("ResultSetSize"))/(headers.get("EntitiesPerPage")))+1; j++){
                 let cell = pageNavigatorRow.insertCell();
-                cell.innerHTML = "<a href=/catalog?page=" + j + ">" + j + "</a>";
+                cell.innerHTML = "<a href=/catalog?page=" + j +
+                "&genre="+params.get("genre") +
+                "&country="+params.get("country") +
+                "&search="+params.get("search")+
+                "&sort="+params.get("sort")+
+                "&decade="+params.get("decade") + ">" + j + "</a>";
           }
       })
       .catch(error => {

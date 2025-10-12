@@ -6,11 +6,11 @@ import ru.kukuruzvelt.application.model.MovieEntity;
 import java.sql.*;
 import java.util.*;
 @Component
-public class MovieEntityDAOJDBC implements MovieEntityDAO {
+public class CatalogDAOJDBC implements CatalogDAO {
 
     private static String URL = "jdbc:postgresql://localhost:5432/";
     private static String login = "postgres";
-    private static String password = null;
+    private static String password = System.getenv("db_password");
     private DriverManager driverManager ;
 
     public MovieEntity findByWebMapping(String webmapping) {
@@ -39,12 +39,15 @@ public class MovieEntityDAOJDBC implements MovieEntityDAO {
         }
     }
 
-    public List<MovieEntity> recieveFilteredNotPaginatedList(Map<String, String> paramsMap) {
+    public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap) {
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("SELECT * FROM 'public.movies'");
+        strBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
+        strBuilder.append(" ORDER BY russiantitle ASC;");
+
         try (Connection connection = driverManager.getConnection(URL, login, password);
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(
-                    new SQLRequestBuilder()
-                            .buildQueryForMovieTableUsingRequestParams(paramsMap))){
+            ResultSet resultSet = statement.executeQuery(strBuilder.toString())){
             List resultList = new ArrayList<>(100);
             while (resultSet.next()) {
                 MovieEntity me = MovieEntity
@@ -69,13 +72,23 @@ public class MovieEntityDAOJDBC implements MovieEntityDAO {
        }
     }
 
-    public List<MovieEntity> recievePaginatedFilteredList(Map<String, String> paramsMap, int entitiesPerPage) {
+    public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT * FROM public.movies");
+        queryBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
+        int page;
+        try {
+            page = Integer.parseInt(paramsMap.getOrDefault("page", "1"));
+        }
+        catch (NumberFormatException e){
+            page = 1;
+        }
+        if (page <= 0) page = 1;
+        queryBuilder.append(" ORDER BY russiantitle ASC");
+        queryBuilder.append(" OFFSET " + (page-1)*entitiesPerPage + " LIMIT " + entitiesPerPage);
         try (Connection connection = driverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(
-                     new SQLRequestBuilder()
-                             .buildQueryForCatalogPage(paramsMap,
-                                     entitiesPerPage))){
+             ResultSet resultSet = statement.executeQuery(queryBuilder.toString())){
             List resultList = new ArrayList<>(100);
             while (resultSet.next()) {
                 MovieEntity me = MovieEntity
@@ -101,11 +114,11 @@ public class MovieEntityDAOJDBC implements MovieEntityDAO {
     }
 
     public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap){
+        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT (*) FROM public.movies");
+        queryBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
         try (Connection connection = driverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(
-                     new SQLRequestBuilder()
-                             .countQuery(paramsMap))){
+             ResultSet resultSet = statement.executeQuery(queryBuilder.toString())){
             resultSet.next();
             long result = (long)resultSet.getObject(1);
             return result;
@@ -116,9 +129,22 @@ public class MovieEntityDAOJDBC implements MovieEntityDAO {
     }
 
     public List<String> findAllUniqueValueFromRequiredColumn(String type) {
+        String query;
+        if (type.contentEquals("countries"))
+            query = "SELECT DISTINCT unnest (countries) FROM public.movies ORDER BY unnest";
+        else if (type.contentEquals("years"))
+            query = "SELECT DISTINCT yearproduction FROM public.movies ORDER BY unnest";
+        else if (type.contentEquals("genres"))
+            query = "SELECT DISTINCT unnest (genres) FROM public.movies ORDER BY unnest";
+        else if (type.contentEquals("decades"))
+            query = "SELECT DISTINCT yearproduction - yearproduction%(10) AS N FROM public.movies ORDER BY N DESC";
+        else if (type.contentEquals("directors"))
+            query = "SELECT DISTINCT unnest (directors) FROM public.movies ORDER BY unnest";
+        else query = " ";
         try (Connection connection = driverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(new SQLRequestBuilder().buildQueryForDistinctParametrs(type))){
+             //ResultSet resultSet = statement.executeQuery(new SQLRequestBuilder().buildQueryForDistinctParametrs(type))
+             ResultSet resultSet = statement.executeQuery(query)) {
             Class.forName("org.postgresql.Driver");
             ArrayList resultList = new ArrayList();
             while (resultSet.next()) {
@@ -131,52 +157,47 @@ public class MovieEntityDAOJDBC implements MovieEntityDAO {
             return Collections.emptyList();
         }
     }
+
+    @Override
+    public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap) {
+        String query;
+        if (type.contentEquals("countries")) query = "SELECT DISTINCT unnest (countries) FROM public.movies ";
+        else if (type.contentEquals("years")) query = "SELECT DISTINCT yearproduction FROM public.movies ";
+        else if (type.contentEquals("genres")) query = "SELECT DISTINCT unnest (genres) FROM public.movies ";
+        else if (type.contentEquals("decades")) query = "SELECT DISTINCT yearproduction - yearproduction%(10) AS N FROM public.movies ";
+        else if (type.contentEquals("directors")) query = "SELECT DISTINCT unnest (directors) FROM public.movies ";
+        else query = " ";
+        StringBuilder builder = new StringBuilder();
+        builder.append(query);
+        builder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
+        if(type.contentEquals("decades")){
+            builder.append(" ORDER BY N ");
+        }
+        else{
+            builder.append(" ORDER BY unnest");
+        }
+        System.out.println(builder.toString());
+        try (Connection connection = driverManager.getConnection(URL, login, password);
+             Statement statement = connection.createStatement();
+             //ResultSet resultSet = statement.executeQuery(new SQLRequestBuilder().buildQueryForDistinctParametrs(type))
+             ResultSet resultSet = statement.executeQuery(builder.toString())){
+            Class.forName("org.postgresql.Driver");
+            ArrayList resultList = new ArrayList();
+            while (resultSet.next()) {
+                resultList.add(resultSet.getString(1));
+            }
+            return resultList;
+        } catch (SQLException e) {
+            return Collections.emptyList();
+        } catch (ClassNotFoundException e) {
+            return Collections.emptyList();
+        }
+    }
+
 }
 
 class SQLRequestBuilder {
 
-    public String buildQueryForMovieTableUsingRequestParams(Map<String, String> paramsMap){
-        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM 'public.moves'");
-        queryBuilder.append(sqlConditionalQueryComposer(paramsMap));
-        queryBuilder.append(" ORDER BY russiantitle ASC;");
-        return queryBuilder.toString();
-    }
-
-    public String buildQueryForDistinctParametrs(String type){
-        switch (type){
-            case ("countries") : return "SELECT DISTINCT unnest (countries) FROM public.movies ORDER BY unnest";
-            case ("years") : return "SELECT DISTINCT yearproduction FROM public.movies ORDER BY unnest";
-            case ("genres") :return "SELECT DISTINCT unnest (genres) FROM public.movies ORDER BY unnest";
-            case ("decades") : return "SELECT DISTINCT yearproduction - yearproduction%(10) FROM public.movies";
-            case ("directors") : return "SELECT DISTINCT unnest (directors) FROM public.movies ORDER BY unnest";
-        }
-        return null;
-    }
-
-    public String countQuery(Map<String, String> paramsMap) {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT COUNT (*) FROM public.movies");
-        queryBuilder.append(sqlConditionalQueryComposer(paramsMap));
-        return queryBuilder.toString();
-    }
-
-    public String buildQueryForCatalogPage(Map<String, String> paramsMap, int entitiesPerPage){
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM public.movies");
-        queryBuilder.append(sqlConditionalQueryComposer(paramsMap));
-        int page;
-        try {
-            page = Integer.parseInt(paramsMap.getOrDefault("page", "1"));
-        }
-        catch (NumberFormatException e){
-            page = 1;
-        }
-        if (page <= 0) page = 1;
-        queryBuilder.append(" ORDER BY russiantitle ASC");
-        queryBuilder.append(" OFFSET " + (page-1)*entitiesPerPage + " LIMIT " + entitiesPerPage);
-        return queryBuilder.toString();
-
-    }
     private boolean isTextQueriable(String test, String regex){
         if (test == null) return false;
         if (!test.contentEquals("null") && !test.contentEquals("all")
@@ -184,14 +205,14 @@ class SQLRequestBuilder {
         return false;
     }
 
-    private String sqlConditionalQueryComposer(Map<String, String> paramsMap){
+    public String translateToConditionalQuerySubstring(Map<String, String> paramsMap){
         List<String> querySubstrings = new ArrayList<>();
         String requiredRegex = "[а-яА-Я]+";
-        String digitalRegex = "^\\d{1,14}$";
+        String digitalRegex = "^\\d{3,5}$";
         if (paramsMap == null) paramsMap = new HashMap<>();
         if (isTextQueriable(paramsMap.get("genre"), requiredRegex)) querySubstrings.add("'" + paramsMap.get("genre") + "' = ANY(movies.genres)");
         if (isTextQueriable(paramsMap.get("country"), requiredRegex)) querySubstrings.add("'" + paramsMap.get("country") + "' = ANY(movies.countries)");
-        if (isTextQueriable(paramsMap.get("search"), requiredRegex)) querySubstrings.add("russiantitle LIKE '%" + paramsMap.get("search") + "%'");
+        if (isTextQueriable(paramsMap.get("search"), requiredRegex)) querySubstrings.add("russiantitle ILIKE '%" + paramsMap.get("search") + "%'");
         if (isTextQueriable(paramsMap.get("decade"), digitalRegex)) {
             int decade = Integer.parseInt(paramsMap.get("decade"));
             querySubstrings.add("yearproduction <= " + String.valueOf(decade + 9) + " AND yearproduction >= " + decade);
@@ -208,4 +229,5 @@ class SQLRequestBuilder {
         }
         return queryBuilder.toString();
     }
+
 }

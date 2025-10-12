@@ -17,7 +17,7 @@ public class CatalogController {
     private static int entitiesPerPage = 9;
     private static int entitiesPerRow = 3;
     @Autowired
-    MovieEntityDAO DataAccessObject;
+    CatalogDAO DataAccessObject;
 
     @GetMapping("/")
     public String redirect(){
@@ -38,7 +38,7 @@ public class CatalogController {
                 + request.getRemoteAddr()
         +" SessionID: " + request.getSession().getId());
         Long quantity = DataAccessObject.getFilteredNotPaginatedListSize(paramsMap);
-        List paginatedResultList = DataAccessObject.recievePaginatedFilteredList(paramsMap, entitiesPerPage);
+        List paginatedResultList = DataAccessObject.findAllByRequiredParametersPaginated(paramsMap, entitiesPerPage);
         response.setHeader("EntitiesPerPage", String.valueOf(entitiesPerPage));
         response.setHeader("EntitiesPerRow", String.valueOf(entitiesPerRow));
         response.setHeader("ResultSetSize", String.valueOf(quantity));
@@ -46,9 +46,12 @@ public class CatalogController {
     }
 
     @GetMapping("/raw/{type}")
-    public ResponseEntity<List> returnValues(@PathVariable String type, HttpServletRequest request) throws SQLException {
+    public ResponseEntity<List> returnValues(
+                        @PathVariable String type,
+                        HttpServletRequest request,
+                        @RequestParam Map<String, String> paramsMap) throws SQLException {
         System.out.println("Fetch to raw type SESSION ID: " + request.getSession().getId());
-        return new ResponseEntity<>(DataAccessObject.findAllUniqueValueFromRequiredColumn(type), HttpStatus.OK);
+        return new ResponseEntity<>(DataAccessObject.findAllUniqueValueFromRequiredColumnAndFilter(type, paramsMap), HttpStatus.OK);
     }
 
     @GetMapping("/{type}")
@@ -56,9 +59,10 @@ public class CatalogController {
         return "redirect:/catalog";
     }
 
-    @GetMapping("hibernate")
-    public String hiberTest(){
-        MovieEntityDAOHibernate dao = new MovieEntityDAOHibernate();
-        return null;
+    @GetMapping("/hibernate/{type}")
+    public ResponseEntity hiberTest(@PathVariable String type){
+        CatalogDAOHibernate dao = new CatalogDAOHibernate();
+        MovieEntity me = dao.findByWebMapping(type);
+        return new ResponseEntity<>(me, HttpStatus.OK);
     }
 }

@@ -1,7 +1,16 @@
+{
+let params = new URLSearchParams(document.location.search);
 let countriestable = document.createElement('table');
         countriestable.setAttribute("align", "center");
         countriestable.setAttribute("class", "table_of_countries");
-        fetch("/raw/countries").then(response => {
+        fetch("/raw/countries?"+
+              "genre="+params.get("genre")+
+              "&year="+ params.get("year")+
+              "&country="+params.get("country")+
+              "&search="+params.get("search")+
+              "&sort="+params.get("sort")+
+              "&page=" + params.get("page") +
+              "&decade="+params.get("decade")).then(response => {
             if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
             return response.json(); // Преобразование ответа в JSON
        })
@@ -11,12 +20,16 @@ let countriestable = document.createElement('table');
             allCountriesCellReference.innerHTML = "<p><a href=?country=all>Все страны</a><p/>"
             var i = 1;
              for (const entity of data){
-                if (i == 5){
+                if (i % 6 == 0){
                     var row = countriestable.insertRow();
                 }
                 let cell = row.insertCell();
                 cell.innerHTML =
-                "<p><a href=?country=" + entity + ">" + entity + "</a></p>"
+                "<p><a href=?country=" + entity + "&genre="+params.get("genre") +
+                                                                  "&country="+params.get("country") +
+                                                                  "&search="+params.get("search")+
+                                                                  "&sort="+params.get("sort")+
+                                                                  "&decade="+params.get("decade") + ">" + entity + "</a></p>"
                 i++;
             }
        })
@@ -24,3 +37,4 @@ let countriestable = document.createElement('table');
              console.error('Ошибка при получении данных:', error);
        });
      document.getElementById("Filter_by_country").appendChild(countriestable);
+     }

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.kukuruzvelt.application.domain.MovieEntityDAO;
-import ru.kukuruzvelt.application.domain.MovieEntityDAOJDBC;
+import ru.kukuruzvelt.application.domain.CatalogDAO;
+import ru.kukuruzvelt.application.domain.CatalogDAOJDBC;
 import ru.kukuruzvelt.application.model.MovieEntity;
 
 @Slf4j
@@ -17,7 +17,7 @@ import ru.kukuruzvelt.application.model.MovieEntity;
 public class MoviePageController {
 
     @Autowired
-    MovieEntityDAO DataAccessObject;
+    CatalogDAO DataAccessObject;
 
     @GetMapping("/movie/{name}")
     public String videoController1(Model model, @PathVariable String name){
@@ -40,7 +40,7 @@ public class MoviePageController {
 
     @GetMapping("raw/movie/{name}")
     public ResponseEntity movieData(@PathVariable String name){
-        MovieEntity me = new MovieEntityDAOJDBC().findByWebMapping(name);
+        MovieEntity me = new CatalogDAOJDBC().findByWebMapping(name);
         return new ResponseEntity<MovieEntity>(me, HttpStatus.OK);
     }
 

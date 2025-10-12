@@ -46,7 +46,7 @@ public class MovieEntity {
   public String getGenresAsString(){
       StringBuilder builder = new StringBuilder();
       for(int i = 0; i < this.Genres.length; i++){
-          if(i > 0) builder.append(",   ");
+          if(i > 0) builder.append("# ");
           builder.append(this.Genres[i]);
       }
       return builder.toString();
@@ -55,7 +55,7 @@ public class MovieEntity {
   public String getCountriesAsString(){
       StringBuilder builder = new StringBuilder();
       for(int i = 0; i < this.Countries.length; i++){
-          if(i > 0) builder.append(", ");
+          if(i > 0) builder.append("# ");
           builder.append(this.Countries[i]);
       }
       return builder.toString();

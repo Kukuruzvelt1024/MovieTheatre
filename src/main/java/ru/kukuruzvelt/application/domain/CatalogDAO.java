@@ -5,17 +5,19 @@ import ru.kukuruzvelt.application.model.MovieEntity;
 import java.util.List;
 import java.util.Map;
 
-public interface MovieEntityDAO {
+public interface CatalogDAO {
 
     public MovieEntity findByWebMapping(String title);
 
-    public List<MovieEntity> recieveFilteredNotPaginatedList(Map<String, String> paramsMap);
+    public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap);
 
-    public List<MovieEntity> recievePaginatedFilteredList(Map<String, String> paramsMap, int entitiesPerPage);
+    public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage);
 
     public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap);
 
     public List<String> findAllUniqueValueFromRequiredColumn(String type);
+
+    public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap);
 
 
 }

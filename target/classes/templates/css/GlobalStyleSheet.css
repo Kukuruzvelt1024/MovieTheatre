@@ -24,7 +24,7 @@ h2{
 	border-spacing: 24px;
 }
 .table_of_entities td{
-    width: 240px;
+    width: 270px;
 }
 th, td{
 	background-color: #424141;
@@ -37,7 +37,8 @@ th, td{
 	border-spacing: 10px;
 }
 .table_of_years td{
-	width: 80px;
+	width: 85px;
+	height: 10px;
 	font-size: 12px;
 
 }
@@ -46,14 +47,16 @@ th, td{
 	border-spacing: 10px;
 }
 .table_of_countries td{
-	width: 80px;
+	width: 75px;
+    font-size: 13px;
 }
 .table_of_genres{
 	border-collapse: separate; 
 	border-spacing: 10px;	
 }
 .table_of_genres td{
-	width: 80px;
+	width: 75px;
+	font-size: 13px;
 }
 td:hover{
 	background: #2E8B57; /* Цвет фона при наведении */
