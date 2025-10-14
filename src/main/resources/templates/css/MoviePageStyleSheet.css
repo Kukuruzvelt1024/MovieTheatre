@@ -1,0 +1,42 @@
+body{
+	background-color: black;
+        color: white; * Цвет текста */
+        text-align: center;
+}
+        a:link {color: white } /* Цвет непросмотренной ссылки */
+        a:visited {color: white; } /* Цвет посещенной ссылки */
+        a:hover {color: red; } /* Цвет при наведении */
+        a:active {color: green; } /* Цвет активной ссылки */
+h1{
+	font-size: 42px;
+        color = white;
+        font-family: "Impact";
+        text-align: center;
+}
+h2{
+        text-align: center;
+}
+.MovieInfo {
+	width: 25%;
+	margin-bottom: 1px;
+	border: 1px solid #dddddd;
+	border-collapse: collapse;
+
+}
+.MovieInfo th {
+	font-weight: bold;
+	padding: 1px;
+	background: #efefef;
+	border: 1px solid #dddddd;
+}
+.MovieInfo td {
+	border: 1px solid #dddddd;
+	padding: 1px;
+	height: 10px;
+	width: 1200px;
+	text-align: center;
+}
+
+footer{
+	text-align: center;
+}
