@@ -17,6 +17,11 @@ public class CatalogDAOTextFile implements CatalogDAO {
     }
 
     @Override
+    public MovieEntity findRandomMovie() {
+        return null;
+    }
+
+    @Override
     public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap) {
         try {
             List<MovieEntity> resultList = new ArrayList<>();

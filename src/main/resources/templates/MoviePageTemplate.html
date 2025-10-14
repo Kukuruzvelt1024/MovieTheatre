@@ -4,7 +4,7 @@
 
         <meta charset="UTF-8">
         <title th:text="${pageTitle}"></title>
-        <link rel="stylesheet" href="/internal/css/GlobalStyleSheet.css">
+        <link rel="stylesheet" href="/internal/css/MoviePageStyleSheet.css">
         </head>
         <body>
             <h1><p th:text="${pageTitle}"></p></h1>
@@ -12,10 +12,18 @@
                 <video width="1280" height="729" controls>
                     <source th:src="'/'+${page}" type="video/mp4">
                 </video>
-                <table>
+                <table class="MovieInfo">
                     <tr>
                         <td>Название</td>
                         <td><p th:text="${RussianTitle}"></p></td>
+                    </tr>
+                    <tr>
+                        <td>Оригинальное название</td>
+                        <td><p th:text="${OriginalTitle}"></p></td>
+                    </tr>
+                    <tr>
+                        <td>Режиссер</td>
+                        <td><p th:text="${Directors}"></p></td>
                     </tr>
                     <tr>
                         <td>Страна</td>
@@ -24,6 +32,10 @@
                     <tr>
                         <td>Жанр</td>
                         <td><p th:text="${Genres}"></p></td>
+                    </tr>
+                    <tr>
+                        <td>Год</td>
+                        <td><p th:text="${Year}"></p></td>
                     </tr>
                     <tr>
                         <td>Продолжительность</td>

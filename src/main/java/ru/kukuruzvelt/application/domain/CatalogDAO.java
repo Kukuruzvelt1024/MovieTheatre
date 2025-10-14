@@ -9,6 +9,8 @@ public interface CatalogDAO {
 
     public MovieEntity findByWebMapping(String title);
 
+    public MovieEntity findRandomMovie();
+
     public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap);
 
     public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage);

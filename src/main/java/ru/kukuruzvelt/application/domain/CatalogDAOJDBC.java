@@ -13,6 +13,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
     private static String password = System.getenv("db_password");
     private DriverManager driverManager ;
 
+    @Override
     public MovieEntity findByWebMapping(String webmapping) {
         String query="SELECT * FROM public.movies WHERE webmapping = '" + webmapping +"'";
         try (Connection connection = driverManager.getConnection(URL, login, password);
@@ -28,7 +29,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
                     .PosterFileName(resultSet.getString("posterfilename"))
                     .Year(resultSet.getInt("yearproduction"))
                     .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
-                    .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(", "))
+                    .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
                     .WebMapping(resultSet.getString("webmapping"))
                     .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
                     .build();
@@ -39,6 +40,34 @@ public class CatalogDAOJDBC implements CatalogDAO {
         }
     }
 
+    @Override
+    public MovieEntity findRandomMovie(){
+        String query="SELECT * FROM public.movies ORDER BY random() LIMIT 1";
+        try (Connection connection = driverManager.getConnection(URL, login, password);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)){
+            resultSet.next();
+            MovieEntity me = MovieEntity
+                    .builder()
+                    .Duration(resultSet.getInt("duration"))
+                    .TitleRussian(resultSet.getString("russiantitle"))
+                    .TitleOriginal(resultSet.getString("originaltitle"))
+                    .VideoFileName(resultSet.getString("videofilename"))
+                    .PosterFileName(resultSet.getString("posterfilename"))
+                    .Year(resultSet.getInt("yearproduction"))
+                    .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
+                    .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
+                    .WebMapping(resultSet.getString("webmapping"))
+                    .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
+                    .build();
+            return me;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap) {
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("SELECT * FROM 'public.movies'");
@@ -72,6 +101,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
        }
     }
 
+    @Override
     public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM public.movies");
@@ -100,7 +130,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
                         .PosterFileName(resultSet.getString("posterfilename"))
                         .Year(resultSet.getInt("yearproduction"))
                         .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
-                        .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(", "))
+                        .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
                         .WebMapping(resultSet.getString("webmapping"))
                         .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
                         .build();
@@ -113,6 +143,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
         }
     }
 
+    @Override
     public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap){
         StringBuilder queryBuilder = new StringBuilder("SELECT COUNT (*) FROM public.movies");
         queryBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
@@ -128,6 +159,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
         }
     }
 
+    @Override
     public List<String> findAllUniqueValueFromRequiredColumn(String type) {
         String query;
         if (type.contentEquals("countries"))
@@ -192,6 +224,10 @@ public class CatalogDAOJDBC implements CatalogDAO {
         } catch (ClassNotFoundException e) {
             return Collections.emptyList();
         }
+    }
+
+    private MovieEntity createEntityFromResultSet(){
+        return null;
     }
 
 }

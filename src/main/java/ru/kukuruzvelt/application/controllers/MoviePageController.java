@@ -26,16 +26,36 @@ public class MoviePageController {
             // var loggingEventBuilder = log.atDebug();
             System.out.println("Доступ к странице просмотра: " + name);
             model.addAttribute("pageTitle", me.getTitleRussian());
-            model.addAttribute("page", "file/" + name);
+            model.addAttribute("page", "file/" + me.getWebMapping());
             model.addAttribute("RussianTitle", me.getTitleRussian());
             model.addAttribute("Countries", me.getCountriesAsString());
             model.addAttribute("Genres", me.getGenresAsString());
-            model.addAttribute("Duration", me.getDuration());
-            return "video";
+            model.addAttribute("Duration", me.getDuration() + " мин.");
+            model.addAttribute("Year", me.getYear() + " год");
+            model.addAttribute("OriginalTitle", me.getTitleOriginal());
+            model.addAttribute("Directors", me.getDirectors());
+            return "MoviePageTemplate";
         }
         catch (NullPointerException npe){
-            return "404";
+            return "PageDoesNotExistTemplate";
         }
+    }
+
+    @GetMapping("/movie/random")
+    public String getRandomMoviePage(Model model){
+        MovieEntity me = DataAccessObject.findRandomMovie();
+        model.addAttribute("pageTitle", me.getTitleRussian());
+        model.addAttribute("page", "file/" + me.getWebMapping());
+        model.addAttribute("RussianTitle", me.getTitleRussian());
+        model.addAttribute("Countries", me.getCountriesAsString());
+        model.addAttribute("Genres", me.getGenresAsString());
+        model.addAttribute("Duration", me.getDuration() + " мин.");
+        model.addAttribute("Year", me.getYear() + " год");
+        model.addAttribute("OriginalTitle", me.getTitleOriginal());
+        model.addAttribute("Directors", me.getDirectors());
+
+        return "MoviePageTemplate";
+
     }
 
     @GetMapping("raw/movie/{name}")

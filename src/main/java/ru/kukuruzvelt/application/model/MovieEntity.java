@@ -20,9 +20,9 @@ import java.util.Map;
 
 
 public class MovieEntity {
-    @Id
-    private long ID;
+
     @Column(name = "webmapping")
+    @Id
     private String WebMapping;
     @Column(name = "videofilename")
     private String VideoFileName;
@@ -44,10 +44,14 @@ public class MovieEntity {
     private String[] Directors;
 
   public String getGenresAsString(){
+
       StringBuilder builder = new StringBuilder();
-      for(int i = 0; i < this.Genres.length; i++){
-          if(i > 0) builder.append("# ");
-          builder.append(this.Genres[i]);
+      String[] str = this.Genres[0].split(",");
+      for(int i = 0; i < str.length; i++){
+          builder.append(str[i]);
+          if(i < str.length-1) {
+              builder.append(", ");
+          }
       }
       return builder.toString();
   }
@@ -55,8 +59,8 @@ public class MovieEntity {
   public String getCountriesAsString(){
       StringBuilder builder = new StringBuilder();
       for(int i = 0; i < this.Countries.length; i++){
-          if(i > 0) builder.append("# ");
           builder.append(this.Countries[i]);
+          if(i < this.Countries.length - 1) builder.append(", ");
       }
       return builder.toString();
   }
