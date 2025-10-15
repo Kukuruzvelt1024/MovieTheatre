@@ -36,10 +36,6 @@ public class CatalogDAOHibernate implements CatalogDAO {
         return null;
     }
 
-    @Override
-    public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap) {
-        return List.of();
-    }
 
     @Override
     public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
@@ -51,10 +47,6 @@ public class CatalogDAOHibernate implements CatalogDAO {
         return 0;
     }
 
-    @Override
-    public List<String> findAllUniqueValueFromRequiredColumn(String type) {
-        return List.of();
-    }
 
     @Override
     public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap) {

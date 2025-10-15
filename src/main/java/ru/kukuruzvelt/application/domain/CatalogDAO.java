@@ -11,13 +11,9 @@ public interface CatalogDAO {
 
     public MovieEntity findRandomMovie();
 
-    public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap);
-
     public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage);
 
     public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap);
-
-    public List<String> findAllUniqueValueFromRequiredColumn(String type);
 
     public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap);
 

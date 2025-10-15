@@ -2,9 +2,9 @@ package ru.kukuruzvelt.application.domain;
 
 import org.springframework.stereotype.Component;
 import ru.kukuruzvelt.application.model.MovieEntity;
-
 import java.sql.*;
 import java.util.*;
+
 @Component
 public class CatalogDAOJDBC implements CatalogDAO {
 
@@ -13,99 +13,36 @@ public class CatalogDAOJDBC implements CatalogDAO {
     private static String password = System.getenv("db_password");
     private DriverManager driverManager ;
 
-    @Override
-    public MovieEntity findByWebMapping(String webmapping) {
+    @Override public MovieEntity findByWebMapping(String webmapping) {
         String query="SELECT * FROM public.movies WHERE webmapping = '" + webmapping +"'";
         try (Connection connection = driverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)){
             resultSet.next();
-            MovieEntity me = MovieEntity
-                    .builder()
-                    .Duration(resultSet.getInt("duration"))
-                    .TitleRussian(resultSet.getString("russiantitle"))
-                    .TitleOriginal(resultSet.getString("originaltitle"))
-                    .VideoFileName(resultSet.getString("videofilename"))
-                    .PosterFileName(resultSet.getString("posterfilename"))
-                    .Year(resultSet.getInt("yearproduction"))
-                    .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
-                    .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
-                    .WebMapping(resultSet.getString("webmapping"))
-                    .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
-                    .build();
-            return me;
+            return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return MovieEntity.nullEntity();
         }
     }
 
-    @Override
-    public MovieEntity findRandomMovie(){
+    @Override public MovieEntity findRandomMovie(){
         String query="SELECT * FROM public.movies ORDER BY random() LIMIT 1";
         try (Connection connection = driverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)){
             resultSet.next();
-            MovieEntity me = MovieEntity
-                    .builder()
-                    .Duration(resultSet.getInt("duration"))
-                    .TitleRussian(resultSet.getString("russiantitle"))
-                    .TitleOriginal(resultSet.getString("originaltitle"))
-                    .VideoFileName(resultSet.getString("videofilename"))
-                    .PosterFileName(resultSet.getString("posterfilename"))
-                    .Year(resultSet.getInt("yearproduction"))
-                    .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
-                    .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
-                    .WebMapping(resultSet.getString("webmapping"))
-                    .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
-                    .build();
-            return me;
+            return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    @Override
-    public List<MovieEntity> findAllByRequiredParameters(Map<String, String> paramsMap) {
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append("SELECT * FROM 'public.movies'");
-        strBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
-        strBuilder.append(" ORDER BY russiantitle ASC;");
-
-        try (Connection connection = driverManager.getConnection(URL, login, password);
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(strBuilder.toString())){
-            List resultList = new ArrayList<>(100);
-            while (resultSet.next()) {
-                MovieEntity me = MovieEntity
-                        .builder()
-                        .Duration(resultSet.getInt("duration"))
-                        .TitleRussian(resultSet.getString("russiantitle"))
-                        .TitleOriginal(resultSet.getString("originaltitle"))
-                        .VideoFileName(resultSet.getString("videofilename"))
-                        .PosterFileName(resultSet.getString("posterfilename"))
-                        .Year(resultSet.getInt("yearproduction"))
-                        .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
-                        .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(", "))
-                        .WebMapping(resultSet.getString("webmapping"))
-                        .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
-                        .build();
-                resultList.add(me);
-            }
-            return resultList;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-       }
-    }
-
-    @Override
-    public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
+    @Override public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM public.movies");
-        queryBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
+        queryBuilder.append(translateToConditionalQuerySubstring(paramsMap));
         int page;
         try {
             page = Integer.parseInt(paramsMap.getOrDefault("page", "1"));
@@ -121,20 +58,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
              ResultSet resultSet = statement.executeQuery(queryBuilder.toString())){
             List resultList = new ArrayList<>(100);
             while (resultSet.next()) {
-                MovieEntity me = MovieEntity
-                        .builder()
-                        .Duration(resultSet.getInt("duration"))
-                        .TitleRussian(resultSet.getString("russiantitle"))
-                        .TitleOriginal(resultSet.getString("originaltitle"))
-                        .VideoFileName(resultSet.getString("videofilename"))
-                        .PosterFileName(resultSet.getString("posterfilename"))
-                        .Year(resultSet.getInt("yearproduction"))
-                        .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(", "))
-                        .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
-                        .WebMapping(resultSet.getString("webmapping"))
-                        .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split(", "))
-                        .build();
-                resultList.add(me);
+                resultList.add(createEntityFromResultSet(resultSet));
             }
             return resultList;
         } catch (SQLException e) {
@@ -143,10 +67,9 @@ public class CatalogDAOJDBC implements CatalogDAO {
         }
     }
 
-    @Override
-    public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap){
+    @Override public long getFilteredNotPaginatedListSize(Map<String, String> paramsMap){
         StringBuilder queryBuilder = new StringBuilder("SELECT COUNT (*) FROM public.movies");
-        queryBuilder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
+        queryBuilder.append(translateToConditionalQuerySubstring(paramsMap));
         try (Connection connection = driverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(queryBuilder.toString())){
@@ -159,39 +82,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
         }
     }
 
-    @Override
-    public List<String> findAllUniqueValueFromRequiredColumn(String type) {
-        String query;
-        if (type.contentEquals("countries"))
-            query = "SELECT DISTINCT unnest (countries) FROM public.movies ORDER BY unnest";
-        else if (type.contentEquals("years"))
-            query = "SELECT DISTINCT yearproduction FROM public.movies ORDER BY unnest";
-        else if (type.contentEquals("genres"))
-            query = "SELECT DISTINCT unnest (genres) FROM public.movies ORDER BY unnest";
-        else if (type.contentEquals("decades"))
-            query = "SELECT DISTINCT yearproduction - yearproduction%(10) AS N FROM public.movies ORDER BY N DESC";
-        else if (type.contentEquals("directors"))
-            query = "SELECT DISTINCT unnest (directors) FROM public.movies ORDER BY unnest";
-        else query = " ";
-        try (Connection connection = driverManager.getConnection(URL, login, password);
-             Statement statement = connection.createStatement();
-             //ResultSet resultSet = statement.executeQuery(new SQLRequestBuilder().buildQueryForDistinctParametrs(type))
-             ResultSet resultSet = statement.executeQuery(query)) {
-            Class.forName("org.postgresql.Driver");
-            ArrayList resultList = new ArrayList();
-            while (resultSet.next()) {
-                resultList.add(resultSet.getString(1));
-            }
-            return resultList;
-        } catch (SQLException e) {
-            return Collections.emptyList();
-        } catch (ClassNotFoundException e) {
-            return Collections.emptyList();
-        }
-    }
-
-    @Override
-    public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap) {
+    @Override public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap) {
         String query;
         if (type.contentEquals("countries")) query = "SELECT DISTINCT unnest (countries) FROM public.movies ";
         else if (type.contentEquals("years")) query = "SELECT DISTINCT yearproduction FROM public.movies ";
@@ -201,7 +92,7 @@ public class CatalogDAOJDBC implements CatalogDAO {
         else query = " ";
         StringBuilder builder = new StringBuilder();
         builder.append(query);
-        builder.append(new SQLRequestBuilder().translateToConditionalQuerySubstring(paramsMap));
+        builder.append(translateToConditionalQuerySubstring(paramsMap));
         if(type.contentEquals("decades")){
             builder.append(" ORDER BY N ");
         }
@@ -226,22 +117,29 @@ public class CatalogDAOJDBC implements CatalogDAO {
         }
     }
 
-    private MovieEntity createEntityFromResultSet(){
-        return null;
+    private MovieEntity createEntityFromResultSet(ResultSet resultSet){
+        try{
+            MovieEntity me = MovieEntity
+                .builder()
+                .Duration(resultSet.getInt("duration"))
+                .TitleRussian(resultSet.getString("russiantitle"))
+                .TitleOriginal(resultSet.getString("originaltitle"))
+                .VideoFileName(resultSet.getString("videofilename"))
+                .PosterFileName(resultSet.getString("posterfilename"))
+                .Year(resultSet.getInt("yearproduction"))
+                .Genres(resultSet.getString("genres").substring(1, resultSet.getString("genres").length()-1).split(","))
+                .Countries(resultSet.getString("countries").substring(1, resultSet.getString("countries").length()-1).split(","))
+                .WebMapping(resultSet.getString("webmapping"))
+                .Directors(resultSet.getString("directors").substring(2, resultSet.getString("directors").length()-2).split("\",\""))
+                .build();
+            return me;
+        }
+        catch (SQLException e) {
+            return MovieEntity.nullEntity();
+        }
     }
 
-}
-
-class SQLRequestBuilder {
-
-    private boolean isTextQueriable(String test, String regex){
-        if (test == null) return false;
-        if (!test.contentEquals("null") && !test.contentEquals("all")
-                && test.matches(regex)) return true;
-        return false;
-    }
-
-    public String translateToConditionalQuerySubstring(Map<String, String> paramsMap){
+    private String translateToConditionalQuerySubstring(Map<String, String> paramsMap){
         List<String> querySubstrings = new ArrayList<>();
         String requiredRegex = "[а-яА-Я]+";
         String digitalRegex = "^\\d{3,5}$";
@@ -265,5 +163,12 @@ class SQLRequestBuilder {
         }
         return queryBuilder.toString();
     }
+    private boolean isTextQueriable(String test, String regex){
+        if (test == null) return false;
+        if (!test.contentEquals("null") && !test.contentEquals("all")
+                && test.matches(regex)) return true;
+        return false;
+    }
 
 }
+

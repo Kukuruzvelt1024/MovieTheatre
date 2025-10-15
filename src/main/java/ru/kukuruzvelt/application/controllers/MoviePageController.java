@@ -21,9 +21,13 @@ public class MoviePageController {
 
     @GetMapping("/movie/{name}")
     public String videoController1(Model model, @PathVariable String name){
-        try {
-            MovieEntity me = DataAccessObject.findByWebMapping(name);
-            // var loggingEventBuilder = log.atDebug();
+        MovieEntity me = null;
+        if(name.contentEquals("random")) {
+            me = DataAccessObject.findRandomMovie();
+        }
+        else {
+            me = DataAccessObject.findByWebMapping(name);
+        }
             System.out.println("Доступ к странице просмотра: " + name);
             model.addAttribute("pageTitle", me.getTitleRussian());
             model.addAttribute("page", "file/" + me.getWebMapping());
@@ -31,31 +35,10 @@ public class MoviePageController {
             model.addAttribute("Countries", me.getCountriesAsString());
             model.addAttribute("Genres", me.getGenresAsString());
             model.addAttribute("Duration", me.getDuration() + " мин.");
-            model.addAttribute("Year", me.getYear() + " год");
+            model.addAttribute("Year", me.getYear());
             model.addAttribute("OriginalTitle", me.getTitleOriginal());
-            model.addAttribute("Directors", me.getDirectors());
+            model.addAttribute("Directors", me.getDirectorsAsString());
             return "MoviePageTemplate";
-        }
-        catch (NullPointerException npe){
-            return "PageDoesNotExistTemplate";
-        }
-    }
-
-    @GetMapping("/movie/random")
-    public String getRandomMoviePage(Model model){
-        MovieEntity me = DataAccessObject.findRandomMovie();
-        model.addAttribute("pageTitle", me.getTitleRussian());
-        model.addAttribute("page", "file/" + me.getWebMapping());
-        model.addAttribute("RussianTitle", me.getTitleRussian());
-        model.addAttribute("Countries", me.getCountriesAsString());
-        model.addAttribute("Genres", me.getGenresAsString());
-        model.addAttribute("Duration", me.getDuration() + " мин.");
-        model.addAttribute("Year", me.getYear() + " год");
-        model.addAttribute("OriginalTitle", me.getTitleOriginal());
-        model.addAttribute("Directors", me.getDirectors());
-
-        return "MoviePageTemplate";
-
     }
 
     @GetMapping("raw/movie/{name}")

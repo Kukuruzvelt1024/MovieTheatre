@@ -6,8 +6,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-import java.util.Map;
-
 @Entity
 @Table(name = "public.movies")
 @Getter
@@ -43,15 +41,13 @@ public class MovieEntity {
     @Column(name = "directors")
     private String[] Directors;
 
-  public String getGenresAsString(){
+    private static MovieEntity nullEntity;
 
+  public String getGenresAsString(){
       StringBuilder builder = new StringBuilder();
-      String[] str = this.Genres[0].split(",");
-      for(int i = 0; i < str.length; i++){
-          builder.append(str[i]);
-          if(i < str.length-1) {
-              builder.append(", ");
-          }
+      for(int i = 0; i < this.Genres.length; i++){
+          builder.append(this.Genres[i]);
+          if(i < this.Genres.length - 1) builder.append(", ");
       }
       return builder.toString();
   }
@@ -65,39 +61,36 @@ public class MovieEntity {
       return builder.toString();
   }
 
-  public boolean containsCountry(String countryRequired){
-      for(int i = 0; i < Countries.length; i++){
-          if (countryRequired.contentEquals(Countries[i])) return true;
+  public String getDirectorsAsString(){
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < this.Directors.length; i++){
+            builder.append(this.Directors[i]);
+            if(i < this.Directors.length - 1) builder.append(", ");
+        }
+        return builder.toString();
+    }
+
+  public static MovieEntity nullEntity(){
+      if (nullEntity == null) {
+          MovieEntity me = MovieEntity
+                  .builder()
+                  .Duration(0)
+                  .TitleRussian("Не Существует")
+                  .TitleOriginal("Does Not Exist")
+                  .VideoFileName("no name")
+                  .PosterFileName("no name")
+                  .Year(0)
+                  .Genres(new String[1])
+                  .Countries(new String[1])
+                  .WebMapping("no name")
+                  .Directors(new String[1])
+                  .build();
+          nullEntity = me;
+          return me;
       }
-      return false;
-  }
-
-  public boolean containsGenre(String genreRequired){
-      for(int i = 0; i < Genres.length; i++){
-          if (genreRequired.contentEquals(Genres[i])) return true;
+      else{
+          return nullEntity;
       }
-      return false;
-  }
-
-  public boolean belongsDecade(int decade){
-      return ((this.Year - decade <= 9) && (this.Year - decade >= 0));
-  }
-
-  public boolean matchesRequirement(Map<String, String> paramsMap){
-      String genreRequired = paramsMap.get("genre") == null ? "null" : paramsMap.get("genre");
-      String countryRequired = paramsMap.get("country") == null ? "null" :paramsMap.get("country");
-      String searchRequest = paramsMap.get("search") == null ? "null" : paramsMap.get("search");
-      String decadeRequired = paramsMap.get("decade") == null ? "null" : paramsMap.get("decade");
-      if (    (this.containsGenre(genreRequired) || genreRequired.contentEquals("null") || genreRequired.contentEquals("all")) &
-              (this.containsCountry(countryRequired) || countryRequired.contentEquals("null") || countryRequired.contentEquals("all")) &
-              (this.getTitleRussian().contains(searchRequest) || searchRequest.contentEquals("null") || searchRequest.contentEquals("all")) &
-              (this.belongsDecade(Integer.parseInt(decadeRequired)) || decadeRequired.contentEquals("null") || decadeRequired.contentEquals("all")))
-          return true;
-      return false;
-  }
-
-  class NullEntity{
-
   }
 
 

@@ -23,7 +23,7 @@
             allGenresCellReference.innerHTML = "<p><a href=?genre=all>Все жанры</a><p/>"
              for (const entity of data){
                 i++;
-                if(i == 10){
+                if(i == 7){
                     i = 0;
                     row = genrestable.insertRow()
                 }

@@ -15,7 +15,7 @@ import ru.kukuruzvelt.application.domain.CatalogDAOJDBC;
 import ru.kukuruzvelt.application.model.MovieEntity;
 import java.io.*;
 import java.sql.SQLException;
-import java.nio.file.Files;
+
 
 @Controller
 public class InternalResourcesController {
@@ -37,7 +37,6 @@ public class InternalResourcesController {
                 + " на адрес: " + request.getRemoteAddr()
                 + " Range: " + request.getHeader("Range"));
         File source = new File(sourceFolder, name);
-       // System.out.println(Files.readAttributes(source.toPath(), "compressed"));
         request.setAttribute(MyResourceHttpRequestHandler.ATTR_FILE, source);
         handler.handleRequest(request, response);
 
