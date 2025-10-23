@@ -13,7 +13,9 @@ fetch("/raw/catalog?"+
 "&search="+params.get("search")+
 "&sort="+params.get("sort")+
 "&page=" + params.get("page") +
-"&decade="+params.get("decade"))
+"&decade="+params.get("decade") +
+"&director="+params.get("director") +
+"&show="+params.get("show"))
        .then(response => {
             headers = response.headers;
             console.log("EntitiesPerPage = " + headers.get("EntitiesPerPage"));

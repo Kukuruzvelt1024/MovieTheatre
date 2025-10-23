@@ -10,7 +10,8 @@ let countriestable = document.createElement('table');
               "&search="+params.get("search")+
               "&sort="+params.get("sort")+
               "&page=" + params.get("page") +
-              "&decade="+params.get("decade")).then(response => {
+              "&decade="+params.get("decade") +
+              "&director="+params.get("director")).then(response => {
             if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
             return response.json(); // Преобразование ответа в JSON
        })
@@ -20,7 +21,7 @@ let countriestable = document.createElement('table');
             allCountriesCellReference.innerHTML = "<p><a href=?country=all>Все страны</a><p/>"
             var i = 1;
              for (const entity of data){
-                if (i % 7 == 0){
+                if (i % 6 == 0){
                     var row = countriestable.insertRow();
                 }
                 let cell = row.insertCell();

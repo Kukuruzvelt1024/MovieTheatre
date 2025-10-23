@@ -63,7 +63,7 @@ public class InternalResourcesController {
 
     private void readAndWrite(final InputStream is, OutputStream os)
             throws IOException {
-        byte[] data = new byte[1048576];
+        byte[] data = new byte[1024];
         int read = 0;
         while ((read = is.read(data)) > 0) {
             os.write(data, 0, read);

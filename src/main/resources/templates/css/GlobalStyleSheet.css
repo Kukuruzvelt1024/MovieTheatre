@@ -16,6 +16,9 @@ h1{
 h2{
         text-align: center;
 }
+input {
+    width: 250px;
+}
 .sort{
 	text-align: center;
 }

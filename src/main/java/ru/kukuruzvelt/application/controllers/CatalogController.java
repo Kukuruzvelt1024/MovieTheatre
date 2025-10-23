@@ -8,14 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.kukuruzvelt.application.domain.*;
 import ru.kukuruzvelt.application.model.*;
-import java.sql.SQLException;
 import java.util.*;
 
 @Controller
 public class CatalogController {
 
-    private static int entitiesPerPage = 9;
-    private static int entitiesPerRow = 3;
+    private static final int entitiesPerPage = 9;
+    private static final int entitiesPerRow = 3;
     @Autowired
     CatalogDAO DataAccessObject;
 
@@ -31,27 +30,23 @@ public class CatalogController {
 
     @GetMapping("/raw/catalog")
     public ResponseEntity<List<MovieEntity>> rawCatalogRequestHandler
-            (HttpServletRequest request,
-             HttpServletResponse response,
+            (HttpServletResponse response,
             @RequestParam Map<String, String> paramsMap)  {
-        System.out.println("Fetch to RAW catalog from: "
-                + request.getRemoteAddr()
-        +" SessionID: " + request.getSession().getId());
         Long quantity = DataAccessObject.getFilteredNotPaginatedListSize(paramsMap);
-        List paginatedResultList = DataAccessObject.findAllByRequiredParametersPaginated(paramsMap, entitiesPerPage);
+        List<MovieEntity> paginatedResultList = DataAccessObject.findAllByRequiredParametersPaginated(paramsMap, entitiesPerPage);
         response.setHeader("EntitiesPerPage", String.valueOf(entitiesPerPage));
         response.setHeader("EntitiesPerRow", String.valueOf(entitiesPerRow));
         response.setHeader("ResultSetSize", String.valueOf(quantity));
         return new ResponseEntity<>(paginatedResultList, HttpStatus.OK);
     }
 
-    @GetMapping("/raw/{type}")
-    public ResponseEntity<List> returnValues(
-                        @PathVariable String type,
-                        HttpServletRequest request,
-                        @RequestParam Map<String, String> paramsMap) throws SQLException {
-        System.out.println("Fetch to raw type SESSION ID: " + request.getSession().getId());
-        return new ResponseEntity<>(DataAccessObject.findAllUniqueValueFromRequiredColumnAndFilter(type, paramsMap), HttpStatus.OK);
+    @GetMapping("/raw/{column}")
+    public ResponseEntity<List<String>> returnValues(
+                        @PathVariable String column,
+                        @RequestParam Map<String, String> paramsMap){
+        return new ResponseEntity<List<String>>(DataAccessObject
+                .findAllUniqueValueFromRequiredColumnAndFilter(column, paramsMap)
+                , HttpStatus.OK);
     }
 
     @GetMapping("/{type}")

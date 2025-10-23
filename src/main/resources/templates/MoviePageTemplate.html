@@ -12,6 +12,11 @@
                 <video width="1280" height="729" controls>
                     <source th:src="'/'+${page}" type="video/mp4">
                 </video>
+                <div>
+                    <form action="random?" target="_self">
+                        <button>Случайный фильм</button>
+                    </form>
+                </div>
                 <table class="MovieInfo">
                     <tr>
                         <td class="value">Название</td>

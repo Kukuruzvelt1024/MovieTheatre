@@ -11,7 +11,8 @@ let decadestable = document.createElement('table');
                       "&search="+params.get("search")+
                       "&sort="+params.get("sort")+
                       "&page=" + params.get("page") +
-                      "&decade="+params.get("decade")).then(response => {
+                      "&decade="+params.get("decade") +
+                      "&director="+params.get("director")).then(response => {
             if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
             return response.json(); // Преобразование ответа в JSON
        })
