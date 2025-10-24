@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
-import ru.kukuruzvelt.application.domain.CatalogDAOJDBC;
+import ru.kukuruzvelt.application.domain.CatalogGatewayJDBCImpl;
 import ru.kukuruzvelt.application.model.MovieEntity;
 import java.io.*;
 import java.sql.SQLException;
@@ -51,7 +51,7 @@ public class InternalResourcesController {
         if (sourceType.contentEquals("javascript")) localStorageSourcehPath = jsFolder.concat(fileName);
         if (sourceType.contentEquals("assets")) localStorageSourcehPath = assetsFolder.concat(fileName);
         if (sourceType.contentEquals("poster")){
-            CatalogDAOJDBC dao = new CatalogDAOJDBC(); //System.out.println("Отправка постера: " + me.getPosterFileName());
+            CatalogGatewayJDBCImpl dao = new CatalogGatewayJDBCImpl(); //System.out.println("Отправка постера: " + me.getPosterFileName());
             MovieEntity me = dao.findByWebMapping(fileName);
             localStorageSourcehPath = posterFolder.concat(me.getPosterFileName());
         }
@@ -79,7 +79,7 @@ public class InternalResourcesController {
         @Override
         protected Resource getResource(HttpServletRequest request) throws IOException {
             final File file = (File) request.getAttribute(ATTR_FILE);
-            return new FileSystemResource(new File(sourceFolder.concat(new CatalogDAOJDBC().
+            return new FileSystemResource(new File(sourceFolder.concat(new CatalogGatewayJDBCImpl().
                     findByWebMapping(extractWebMapping(request)).getVideoFileName())));
         }
 

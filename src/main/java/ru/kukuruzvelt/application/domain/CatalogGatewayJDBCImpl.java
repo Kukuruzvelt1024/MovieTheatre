@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.*;
 
 @Component
-public class CatalogDAOJDBC implements CatalogDAO {
+public class CatalogGatewayJDBCImpl implements CatalogGateway {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/";
     private static final String login = "postgres";
@@ -20,7 +20,6 @@ public class CatalogDAOJDBC implements CatalogDAO {
             resultSet.next();
             return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
             return MovieEntity.nullEntity();
         }
     }
@@ -33,12 +32,11 @@ public class CatalogDAOJDBC implements CatalogDAO {
             resultSet.next();
             return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
             return null;
         }
     }
 
-    @Override public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
+    @Override public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap) {
         SQLRequestBuilder request =
                 new SQLRequestBuilder()
                         .setBase("SELECT * FROM public.movies ")
@@ -54,7 +52,6 @@ public class CatalogDAOJDBC implements CatalogDAO {
             }
             return resultList;
         } catch (SQLException e) {
-            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -69,23 +66,19 @@ public class CatalogDAOJDBC implements CatalogDAO {
             resultSet.next();
             return (long)resultSet.getObject(1);
         } catch (SQLException e) {
-            e.printStackTrace();
             return 0;
         }
     }
 
-    @Override public List<String> findAllUniqueValueFromRequiredColumnAndFilter
-            (String column, Map<String, String> requestParams) {
+    @Override public List<String> findAllUniqueValuesFromColumn(String column, Map<String, String> requestParams) {
         SQLRequestBuilder request = new SQLRequestBuilder();
         request.setSelectDistinct(column)
                 .setConditions(requestParams)
                 .setOrderBy(" ORDER BY N ");
-        System.out.println(request);
-
         try (Connection connection = DriverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(request.toString())){
-            ArrayList<String> resultList = new ArrayList<String>();
+            ArrayList<String> resultList = new ArrayList<>();
             while (resultSet.next()) {
                 resultList.add(resultSet.getString(1));
             }
@@ -112,9 +105,9 @@ public class CatalogDAOJDBC implements CatalogDAO {
                     .build();
         }
         catch (SQLException e) {
-            e.printStackTrace();
             return MovieEntity.nullEntity();
         }
     }
+
 }
 

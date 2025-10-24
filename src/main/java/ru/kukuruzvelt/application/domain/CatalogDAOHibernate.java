@@ -4,14 +4,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import ru.kukuruzvelt.application.model.MovieEntity;
 
 import java.util.List;
 import java.util.Map;
 
 
-public class CatalogDAOHibernate implements CatalogDAO {
+public class CatalogDAOHibernate implements CatalogGateway {
     @Autowired
     Configuration configuration;
 
@@ -38,7 +37,7 @@ public class CatalogDAOHibernate implements CatalogDAO {
 
 
     @Override
-    public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap, int entitiesPerPage) {
+    public List<MovieEntity> findAllByRequiredParametersPaginated(Map<String, String> paramsMap) {
         return List.of();
     }
 
@@ -49,7 +48,7 @@ public class CatalogDAOHibernate implements CatalogDAO {
 
 
     @Override
-    public List<String> findAllUniqueValueFromRequiredColumnAndFilter(String type, Map<String, String> paramsMap) {
+    public List<String> findAllUniqueValuesFromColumn(String type, Map<String, String> paramsMap) {
         return List.of();
     }
 }

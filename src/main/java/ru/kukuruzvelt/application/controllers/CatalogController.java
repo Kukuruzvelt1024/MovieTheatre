@@ -16,7 +16,7 @@ public class CatalogController {
     private static final int entitiesPerPage = 9;
     private static final int entitiesPerRow = 3;
     @Autowired
-    CatalogDAO DataAccessObject;
+    private CatalogGateway DataAccessObject;
 
     @GetMapping("/")
     public String redirect(){
@@ -31,9 +31,9 @@ public class CatalogController {
     @GetMapping("/raw/catalog")
     public ResponseEntity<List<MovieEntity>> rawCatalogRequestHandler
             (HttpServletResponse response,
-            @RequestParam Map<String, String> paramsMap)  {
-        Long quantity = DataAccessObject.getFilteredNotPaginatedListSize(paramsMap);
-        List<MovieEntity> paginatedResultList = DataAccessObject.findAllByRequiredParametersPaginated(paramsMap, entitiesPerPage);
+            @RequestParam Map<String, String> requestParameters)  {
+        Long quantity = DataAccessObject.getFilteredNotPaginatedListSize(requestParameters);
+        List<MovieEntity> paginatedResultList = DataAccessObject.findAllByRequiredParametersPaginated(requestParameters);
         response.setHeader("EntitiesPerPage", String.valueOf(entitiesPerPage));
         response.setHeader("EntitiesPerRow", String.valueOf(entitiesPerRow));
         response.setHeader("ResultSetSize", String.valueOf(quantity));
@@ -44,9 +44,9 @@ public class CatalogController {
     public ResponseEntity<List<String>> returnValues(
                         @PathVariable String column,
                         @RequestParam Map<String, String> paramsMap){
-        return new ResponseEntity<List<String>>(DataAccessObject
-                .findAllUniqueValueFromRequiredColumnAndFilter(column, paramsMap)
-                , HttpStatus.OK);
+        return new ResponseEntity<List<String>>(
+                DataAccessObject.findAllUniqueValuesFromColumn(column, paramsMap), HttpStatus.OK);
+
     }
 
     @GetMapping("/{type}")

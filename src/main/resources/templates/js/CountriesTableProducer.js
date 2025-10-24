@@ -21,7 +21,7 @@ let countriestable = document.createElement('table');
             allCountriesCellReference.innerHTML = "<p><a href=?country=all>Все страны</a><p/>"
             var i = 1;
              for (const entity of data){
-                if (i % 6 == 0){
+                if (i % 5 == 0){
                     var row = countriestable.insertRow();
                 }
                 let cell = row.insertCell();
