@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Table(name = "public.movies")
+@Table(name = "movies")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -34,9 +34,9 @@ public class MovieEntity {
     private String[] Genres;
     @Column(name = "duration")
     private Integer Duration;
-    @Column(name = "titlerussian")
+    @Column(name = "russiantitle")
     private String TitleRussian;
-    @Column(name = "titleoriginal")
+    @Column(name = "originaltitle")
     private String TitleOriginal;
     @Column(name = "directors")
     private String[] Directors;

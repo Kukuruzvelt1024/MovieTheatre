@@ -1,4 +1,4 @@
-package ru.kukuruzvelt.application.domain;
+package ru.kukuruzvelt.application.dataAccess;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class CatalogDAOHibernate implements CatalogGateway {
+public class CatalogDataAccessHibernate implements CatalogDataAccess {
     @Autowired
     Configuration configuration;
 

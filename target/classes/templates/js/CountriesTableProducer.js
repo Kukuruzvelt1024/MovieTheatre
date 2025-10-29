@@ -3,7 +3,7 @@ let params = new URLSearchParams(document.location.search);
 let countriestable = document.createElement('table');
         countriestable.setAttribute("align", "center");
         countriestable.setAttribute("class", "table_of_countries");
-        fetch("/raw/countries?"+
+        fetch("/raw/catalog/countries?"+
               "genre="+params.get("genre")+
               "&year="+ params.get("year")+
               "&country="+params.get("country")+
@@ -21,7 +21,7 @@ let countriestable = document.createElement('table');
             allCountriesCellReference.innerHTML = "<p><a href=?country=all>Все страны</a><p/>"
             var i = 1;
              for (const entity of data){
-                if (i % 6 == 0){
+                if (i % 5 == 0){
                     var row = countriestable.insertRow();
                 }
                 let cell = row.insertCell();

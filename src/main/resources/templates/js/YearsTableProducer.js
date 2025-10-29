@@ -4,7 +4,7 @@ let decadestable = document.createElement('table');
         decadestable.setAttribute("align", "center");
         decadestable.setAttribute("class", "table_of_years");
 
-        fetch("/raw/decades?"+
+        fetch("/raw/catalog/decades?"+
                       "genre="+params.get("genre")+
                       "&year="+ params.get("year")+
                       "&country="+params.get("country")+

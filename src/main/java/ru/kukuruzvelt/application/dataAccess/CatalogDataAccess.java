@@ -1,11 +1,11 @@
-package ru.kukuruzvelt.application.domain;
+package ru.kukuruzvelt.application.dataAccess;
 
 import ru.kukuruzvelt.application.model.MovieEntity;
 
 import java.util.List;
 import java.util.Map;
 
-public interface CatalogGateway {
+public interface CatalogDataAccess {
 
     MovieEntity findByWebMapping(String title);
 

@@ -3,7 +3,7 @@ let params = new URLSearchParams(document.location.search);
 let countriestable = document.createElement('table');
         countriestable.setAttribute("align", "center");
         countriestable.setAttribute("class", "table_of_countries");
-        fetch("/raw/countries?"+
+        fetch("/raw/catalog/countries?"+
               "genre="+params.get("genre")+
               "&year="+ params.get("year")+
               "&country="+params.get("country")+

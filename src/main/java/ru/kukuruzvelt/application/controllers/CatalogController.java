@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.kukuruzvelt.application.domain.*;
+import ru.kukuruzvelt.application.dataAccess.CatalogDataAccessHibernate;
 import ru.kukuruzvelt.application.model.*;
+import ru.kukuruzvelt.application.service.CatalogService;
+
 import java.util.*;
 
 @Controller
@@ -16,7 +18,7 @@ public class CatalogController {
     private static final int entitiesPerPage = 9;
     private static final int entitiesPerRow = 3;
     @Autowired
-    private CatalogGateway DataAccessObject;
+    private CatalogService catalogService;
 
     @GetMapping("/")
     public String redirect(){
@@ -32,20 +34,20 @@ public class CatalogController {
     public ResponseEntity<List<MovieEntity>> rawCatalogRequestHandler
             (HttpServletResponse response,
             @RequestParam Map<String, String> requestParameters)  {
-        Long quantity = DataAccessObject.getFilteredNotPaginatedListSize(requestParameters);
-        List<MovieEntity> paginatedResultList = DataAccessObject.findAllByRequiredParametersPaginated(requestParameters);
+        Long quantity = catalogService.findTotalRelevantRowsAmount(requestParameters);
+        List<MovieEntity> paginatedResultList = catalogService.findMoviesByRequiredParameters(requestParameters);
         response.setHeader("EntitiesPerPage", String.valueOf(entitiesPerPage));
         response.setHeader("EntitiesPerRow", String.valueOf(entitiesPerRow));
         response.setHeader("ResultSetSize", String.valueOf(quantity));
         return new ResponseEntity<>(paginatedResultList, HttpStatus.OK);
     }
 
-    @GetMapping("/raw/{column}")
+    @GetMapping("/raw/catalog/{column}")
     public ResponseEntity<List<String>> returnValues(
                         @PathVariable String column,
                         @RequestParam Map<String, String> paramsMap){
-        return new ResponseEntity<List<String>>(
-                DataAccessObject.findAllUniqueValuesFromColumn(column, paramsMap), HttpStatus.OK);
+        List<String> result = catalogService.findAllDistinctValues(paramsMap, column);
+        return new ResponseEntity<List<String>>(result, HttpStatus.OK);
 
     }
 
@@ -56,7 +58,7 @@ public class CatalogController {
 
     @GetMapping("/hibernate/{type}")
     public ResponseEntity hiberTest(@PathVariable String type){
-        CatalogDAOHibernate dao = new CatalogDAOHibernate();
+        CatalogDataAccessHibernate dao = new CatalogDataAccessHibernate();
         MovieEntity me = dao.findByWebMapping(type);
         return new ResponseEntity<>(me, HttpStatus.OK);
     }

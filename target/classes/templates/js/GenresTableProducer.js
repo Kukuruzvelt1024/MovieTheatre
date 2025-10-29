@@ -3,7 +3,7 @@
  let genrestable = document.createElement('table');
         genrestable.setAttribute("align", "center");
         genrestable.setAttribute("class", "table_of_genres");
-        fetch("/raw/genres?"+
+        fetch("/raw/catalog/genres?"+
                       "genre="+params.get("genre")+
                       "&year="+ params.get("year")+
                       "&country="+params.get("country")+

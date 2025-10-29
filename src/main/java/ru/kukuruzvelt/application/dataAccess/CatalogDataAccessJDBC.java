@@ -1,4 +1,4 @@
-package ru.kukuruzvelt.application.domain;
+package ru.kukuruzvelt.application.dataAccess;
 
 import org.springframework.stereotype.Component;
 import ru.kukuruzvelt.application.model.MovieEntity;
@@ -6,17 +6,25 @@ import java.sql.*;
 import java.util.*;
 
 @Component
-public class CatalogGatewayJDBCImpl implements CatalogGateway {
+public class CatalogDataAccessJDBC implements CatalogDataAccess {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/";
     private static final String login = "postgres";
     private static final String password = System.getenv("db_password");
+    private static final String findStatement =
+            """
+            SELECT * FROM public.movies WHERE webmapping = ?
+            """;
+    private static final String findRandom =
+                    """
+                    SELECT * FROM public.movies ORDER BY random() LIMIT 1
+                    """;
 
     @Override public MovieEntity findByWebMapping(String webmapping) {
-        String query="SELECT * FROM public.movies WHERE webmapping = '" + webmapping + "'";
-        try (Connection connection = DriverManager.getConnection(URL, login, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)){
+        try (Connection connection = DriverManager.getConnection(URL, login, password)){
+            PreparedStatement prepStatement = connection.prepareStatement(findStatement);
+            prepStatement.setString(1, webmapping);
+            ResultSet resultSet = prepStatement.executeQuery();
             resultSet.next();
             return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
@@ -25,14 +33,13 @@ public class CatalogGatewayJDBCImpl implements CatalogGateway {
     }
 
     @Override public MovieEntity findRandomMovie(){
-        String query="SELECT * FROM public.movies ORDER BY random() LIMIT 1";
         try (Connection connection = DriverManager.getConnection(URL, login, password);
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)){
+             ResultSet resultSet = statement.executeQuery(findRandom)){
             resultSet.next();
             return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
-            return null;
+            return MovieEntity.nullEntity();
         }
     }
 
