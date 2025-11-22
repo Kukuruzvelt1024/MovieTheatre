@@ -5,12 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kukuruzvelt.application.dataAccess.CatalogDataAccessHibernate;
 import ru.kukuruzvelt.application.model.*;
 import ru.kukuruzvelt.application.service.CatalogService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class CatalogController {
@@ -61,5 +69,30 @@ public class CatalogController {
         CatalogDataAccessHibernate dao = new CatalogDataAccessHibernate();
         MovieEntity me = dao.findByWebMapping(type);
         return new ResponseEntity<>(me, HttpStatus.OK);
+    }
+
+    @GetMapping("/raw/audio")
+    public ResponseEntity audio(@RequestParam int deep) throws IOException {
+        List<String> res = Files.walk(Paths.get("D:\\Music\\"), deep)
+                .filter(x -> x.toString().contains(".mp3")
+                        || x.toString().contains(".flac")
+                        || x.toString().contains(".m4a"))
+                .map(x-> x.toString().replace("%20", " "))
+                .map(x-> x.replace("\\", "/"))
+                .map(x-> x.split("/Music/")[1])
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/audio")
+    public String getAudio(Model model) throws IOException {
+        List<String> tracks = Files.walk(Paths.get("D:\\Music\\"))
+                .filter(x -> x.toString().contains(".mp3"))
+                .map(x-> x.toString().replace("%20", " "))
+                .map(x-> x.replace("\\", "/"))
+                .map(x-> x.split("/Music/")[1])
+                .collect(Collectors.toList());
+        model.addAttribute("listOfTracks", tracks);
+        return "audiocatalog";
     }
 }

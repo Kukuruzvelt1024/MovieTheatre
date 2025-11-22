@@ -28,6 +28,7 @@ public class CatalogDataAccessJDBC implements CatalogDataAccess {
             resultSet.next();
             return createEntityFromResultSet(resultSet);
         } catch (SQLException e) {
+            e.printStackTrace();
             return MovieEntity.nullEntity();
         }
     }

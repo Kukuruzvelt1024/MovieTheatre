@@ -19,12 +19,11 @@ import java.sql.SQLException;
 
 @Controller
 public class InternalResourcesController {
-    private static String sourceFolder = "B:\\src\\";
-    private static String cssFolder = "B:\\IdeaProjects\\application\\src\\main\\resources\\templates\\css\\";
-    private static String jsFolder = "B:\\IdeaProjects\\application\\src\\main\\resources\\templates\\js\\";
-    private static String posterFolder = "B:\\posters\\";
-    private static String assetsFolder = "B:\\assets\\";
-
+    private static final String sourceFolder = "B:\\src\\";
+    private static final String cssFolder = "B:\\IdeaProjects\\application\\src\\main\\resources\\templates\\css\\";
+    private static final String jsFolder = "B:\\IdeaProjects\\application\\src\\main\\resources\\templates\\js\\";
+    private static final String posterFolder = "B:\\posters\\";
+    private static final String assetsFolder = "B:\\assets\\";
     @Autowired
     private MyResourceHttpRequestHandler handler;
 
@@ -36,8 +35,8 @@ public class InternalResourcesController {
         System.out.println("Отправка видеофрагмента: " + name
                 + " на адрес: " + request.getRemoteAddr()
                 + " Range: " + request.getHeader("Range"));
-        File source = new File(sourceFolder, name);
-        request.setAttribute(MyResourceHttpRequestHandler.ATTR_FILE, source);
+       //File source = new File(sourceFolder, name);
+        //request.setAttribute(MyResourceHttpRequestHandler.ATTR_FILE, source);
         handler.handleRequest(request, response);
 
     }
@@ -61,6 +60,8 @@ public class InternalResourcesController {
         };
     }
 
+   // public Streaming
+
     private void readAndWrite(final InputStream is, OutputStream os)
             throws IOException {
         byte[] data = new byte[1024];
@@ -79,9 +80,15 @@ public class InternalResourcesController {
         @Override
         protected Resource getResource(HttpServletRequest request) throws IOException {
             final File file = (File) request.getAttribute(ATTR_FILE);
-            return new FileSystemResource(new File(sourceFolder.concat(new CatalogDataAccessJDBC().
-                    findByWebMapping(extractWebMapping(request)).getVideoFileName())));
+            String webMapping = extractWebMapping(request);
+            MovieEntity entity = new CatalogDataAccessJDBC().findByWebMapping(webMapping);
+            String filePath = sourceFolder.concat(entity.getVideoFileName());
+            File sourceFile = new File(filePath);
+            return new FileSystemResource(sourceFile);
+           // return new FileSystemResource(new File(sourceFolder.concat(new CatalogDataAccessJDBC().
+                    //findByWebMapping(extractWebMapping(request)).getVideoFileName())));
         }
+
 
         private String extractWebMapping(HttpServletRequest request){
             return request.getRequestURL().
