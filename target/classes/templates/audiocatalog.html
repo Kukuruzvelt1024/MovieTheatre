@@ -1,0 +1,17 @@
+<html>
+    <body>
+    <tr th:each="track : ${listOfTracks}">
+        <details>
+            <summary><p th:text="${track}"></p></summary>
+        <td>
+            <p></p>
+            <audio width="400" height="300" controls>
+                <source th:src="'audio/file/'+${track}" type="audio/mpeg">
+            </audio>
+            </td>
+        </details>
+    </tr>
+
+
+    </body>
+</html>
