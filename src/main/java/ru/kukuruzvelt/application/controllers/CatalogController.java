@@ -71,28 +71,4 @@ public class CatalogController {
         return new ResponseEntity<>(me, HttpStatus.OK);
     }
 
-    @GetMapping("/raw/audio")
-    public ResponseEntity audio(@RequestParam int deep) throws IOException {
-        List<String> res = Files.walk(Paths.get("D:\\Music\\"), deep)
-                .filter(x -> x.toString().contains(".mp3")
-                        || x.toString().contains(".flac")
-                        || x.toString().contains(".m4a"))
-                .map(x-> x.toString().replace("%20", " "))
-                .map(x-> x.replace("\\", "/"))
-                .map(x-> x.split("/Music/")[1])
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
-    @GetMapping("/audio")
-    public String getAudio(Model model) throws IOException {
-        List<String> tracks = Files.walk(Paths.get("D:\\Music\\"))
-                .filter(x -> x.toString().contains(".mp3"))
-                .map(x-> x.toString().replace("%20", " "))
-                .map(x-> x.replace("\\", "/"))
-                .map(x-> x.split("/Music/")[1])
-                .collect(Collectors.toList());
-        model.addAttribute("listOfTracks", tracks);
-        return "audiocatalog";
-    }
 }

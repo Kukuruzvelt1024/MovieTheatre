@@ -50,17 +50,16 @@ public class InternalResourcesController {
         if (sourceType.contentEquals("javascript")) localStorageSourcehPath = jsFolder.concat(fileName);
         if (sourceType.contentEquals("assets")) localStorageSourcehPath = assetsFolder.concat(fileName);
         if (sourceType.contentEquals("poster")){
-            CatalogDataAccessJDBC dao = new CatalogDataAccessJDBC(); //System.out.println("Отправка постера: " + me.getPosterFileName());
+            /*CatalogDataAccessJDBC dao = new CatalogDataAccessJDBC(); //System.out.println("Отправка постера: " + me.getPosterFileName());
             MovieEntity me = dao.findByWebMapping(fileName);
-            localStorageSourcehPath = posterFolder.concat(me.getPosterFileName());
+            localStorageSourcehPath = posterFolder.concat(me.getPosterFileName());*/
+            localStorageSourcehPath = posterFolder.concat(fileName).concat(".webp");
         }
         final InputStream fileStream = new FileInputStream(localStorageSourcehPath);
         long size = fileStream.available();
         return (os) -> {readAndWrite(fileStream, os);
         };
     }
-
-   // public Streaming
 
     private void readAndWrite(final InputStream is, OutputStream os)
             throws IOException {
