@@ -5,20 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kukuruzvelt.application.dataAccess.CatalogDataAccessHibernate;
 import ru.kukuruzvelt.application.model.*;
 import ru.kukuruzvelt.application.service.CatalogService;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 public class CatalogController {
