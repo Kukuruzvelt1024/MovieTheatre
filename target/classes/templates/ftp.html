@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+    <li th:each="item : ${items}">
+        <a th:href="'internal/ftp/' + ${item}" th:text="${item}">Название</a>
+    </li>
+</ul>
+
+</body>
+</html>

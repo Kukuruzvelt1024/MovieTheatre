@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Titdsdsde</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse; /* Убирает двойные линии между ячейками */
+        }
+        th, td {
+            border: 1px solid #000; /* Задает сплошную границу 1px черного цвета */
+            padding: 10px; /* Добавляет отступы внутри ячеек */
+            text-align: left; /* Выравнивание текста */
+        }
+        th {
+            background-color: #f2f2f2; /* Фоновый цвет для заголовков */
+        }
+    </style>
+</head>
+<body>
+<div class="table-container">
+    <table class="horizontal-table">
+        <thead>
+        <tr>
+            <th>N</th>
+            <th>f(n)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${myMap}">
+            <!-- 2. Display text inside td using th:text -->
+            <td th:text="${entry.key}"></td>
+            <td th:text="${entry.value}"></td>
+        </tr>
+
+        </tbody>
+    </table>
+    <p th:text="${result}">Placeholder</p>
+    <div class="input form">
+        <form action="/math" method="get">
+            <p><input type="text" name="function" placeholder="Функция" size="18" /></p>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+</div>
+
+<div class="reset button">
+    <form action="/math/reset" method = "get">
+        <button type="submit">Следующая функция</button>
+    </form>
+</div>
+
+<div class="reset button">
+    <form id = "myForm" action="/math/show" method = "get">
+        <button type="submit">Показать функцию</button>
+    </form>
+</div>
+<p th:text="${polynome}">Placeholder</p>
+
+</body>
+</html>
