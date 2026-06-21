@@ -1,4 +1,4 @@
-package ru.kukuruzvelt.application.controllers;
+package ru.kukuruzvelt.application.controllers.movietheater;
 
 import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Autowired;

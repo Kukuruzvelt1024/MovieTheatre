@@ -1,4 +1,4 @@
-package ru.kukuruzvelt.application.controllers;
+package ru.kukuruzvelt.application.controllers.mathguesser;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package ru.kukuruzvelt.application.controllers;
+package ru.kukuruzvelt.application.controllers.resources;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +24,7 @@ public class InternalResourcesController {
     private static final String jsFolder = "B:\\IdeaProjects\\application\\src\\main\\resources\\templates\\js\\";
     private static final String posterFolder = "B:\\posters\\";
     private static final String assetsFolder = "B:\\assets\\";
+    private static final String ftpFolder = "B:\\FTP\\";
     @Autowired
     private MyResourceHttpRequestHandler handler;
 
@@ -49,12 +50,14 @@ public class InternalResourcesController {
         if (sourceType.contentEquals("css")) localStorageSourcehPath = cssFolder.concat(fileName);
         if (sourceType.contentEquals("javascript")) localStorageSourcehPath = jsFolder.concat(fileName);
         if (sourceType.contentEquals("assets")) localStorageSourcehPath = assetsFolder.concat(fileName);
+        if (sourceType.contentEquals("ftp")) localStorageSourcehPath = ftpFolder.concat(fileName);
         if (sourceType.contentEquals("poster")){
             /*CatalogDataAccessJDBC dao = new CatalogDataAccessJDBC(); //System.out.println("Отправка постера: " + me.getPosterFileName());
             MovieEntity me = dao.findByWebMapping(fileName);
             localStorageSourcehPath = posterFolder.concat(me.getPosterFileName());*/
             localStorageSourcehPath = posterFolder.concat(fileName).concat(".webp");
         }
+        System.out.println("Getting File " + localStorageSourcehPath.toString());
         final InputStream fileStream = new FileInputStream(localStorageSourcehPath);
         long size = fileStream.available();
         return (os) -> {readAndWrite(fileStream, os);

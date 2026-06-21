@@ -1,4 +1,4 @@
-package ru.kukuruzvelt.application.controllers;
+package ru.kukuruzvelt.application.controllers.movietheater;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
